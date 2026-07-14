@@ -4,6 +4,19 @@ from pymodbus.exceptions import ModbusException
 from .const import (
     DEFAULT_SLAVE,
     REGISTER_COUNT,
+    REGISTER_EXT_TEMP,
+    REGISTER_EXT_HUM,
+    REGISTER_EJECT_TEMP,
+    REGISTER_EJECT_HUM,
+    REGISTER_INT_TEMP,
+    REGISTER_INT_HUM,
+    REGISTER_FLOW_TEMP,
+    REGISTER_FLOW_HUM,
+    REGISTER_MOTOR_1_RPM,
+    REGISTER_MOTOR_2_RPM,
+    REGISTER_POST_TRTMT,
+    REGISTER_MACHINE_DAYS,
+    REGISTER_FILTER_HOURS,
     START_REGISTER,
 )
 from .exceptions import CannotConnect, ReadError
@@ -54,9 +67,7 @@ class AriosaClient:
 
         try:
             response = await self._client.read_input_registers(
-                address=START_REGISTER,
-                count=REGISTER_COUNT,
-                slave=self._slave,
+                address=START_REGISTER, count=REGISTER_COUNT, device_id=self._slave
             )
         except ModbusException as err:
             raise ReadError from err
@@ -67,19 +78,19 @@ class AriosaClient:
         registers = response.registers
 
         return AriosaMeasurements(
-            external_temperature=self._temperature(registers[0]),
-            external_humidity=self._humidity(registers[1]),
-            ejection_temperature=self._temperature(registers[2]),
-            ejection_humidity=self._humidity(registers[3]),
-            internal_temperature=self._temperature(registers[4]),
-            internal_humidity=self._humidity(registers[5]),
-            flow_temperature=self._temperature(registers[6]),
-            flow_humidity=self._humidity(registers[7]),
-            motor_1_rpm=registers[8],
-            motor_2_rpm=registers[9],
-            post_treatment=registers[10],
-            machine_days=registers[11],
-            filter_hours=registers[12],
+            external_temperature=self._temperature(registers[REGISTER_EXT_TEMP]),
+            external_humidity=self._humidity(registers[REGISTER_EXT_HUM]),
+            ejection_temperature=self._temperature(registers[REGISTER_EJECT_TEMP]),
+            ejection_humidity=self._humidity(registers[REGISTER_EJECT_HUM]),
+            internal_temperature=self._temperature(registers[REGISTER_INT_TEMP]),
+            internal_humidity=self._humidity(registers[REGISTER_INT_HUM]),
+            flow_temperature=self._temperature(registers[REGISTER_FLOW_TEMP]),
+            flow_humidity=self._humidity(registers[REGISTER_FLOW_HUM]),
+            motor_1_rpm=registers[REGISTER_MOTOR_1_RPM],
+            motor_2_rpm=registers[REGISTER_MOTOR_2_RPM],
+            post_treatment=registers[REGISTER_POST_TRTMT],
+            machine_days=registers[REGISTER_MACHINE_DAYS],
+            filter_hours=registers[REGISTER_FILTER_HOURS],
         )
 
     @staticmethod
