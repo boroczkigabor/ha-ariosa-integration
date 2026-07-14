@@ -7,27 +7,25 @@ type AriosaConfigEntry = ConfigEntry
 
 
 async def async_setup(
-    hass: HomeAssistant,
-    config: dict,
+        hass: HomeAssistant,
+        config: dict,
 ) -> bool:
     return True
 
 
 async def async_setup_entry(
-    hass: HomeAssistant,
-    entry: AriosaConfigEntry,
+        hass: HomeAssistant,
+        entry: AriosaConfigEntry,
 ) -> bool:
-
     hass.data.setdefault(DOMAIN, {})
 
     return True
 
 
 async def async_unload_entry(
-    hass: HomeAssistant,
-    entry: AriosaConfigEntry,
+        hass: HomeAssistant,
+        entry: AriosaConfigEntry,
 ) -> bool:
-
     hass.data[DOMAIN].pop(entry.entry_id)
 
     return True
