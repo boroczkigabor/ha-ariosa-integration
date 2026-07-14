@@ -14,6 +14,7 @@ async def test_config_flow_success(hass):
         client.connect = AsyncMock()
         client.disconnect = AsyncMock()
         client.read_inputs = AsyncMock()
+        await hass.async_block_till_done()
 
         result = await hass.config_entries.flow.async_init(
             DOMAIN,
