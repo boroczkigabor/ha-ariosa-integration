@@ -1,11 +1,11 @@
 [project]
 name = "ha-ariosa-integration"
 version = "0.1.0"
-requires-python = ">=3.13"
+requires-python = ">=3.14"
 
 [tool.ruff]
 line-length = 88
-target-version = "py313"
+target-version = "py314"
 
 [tool.ruff.lint]
 select = ["ALL"]
