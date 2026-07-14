@@ -1,13 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
 
-from custom_components.ariosa import AriosaDataUpdateCoordinator
-
-
-@dataclass
-class AriosaRuntimeData:
-    coordinator: AriosaDataUpdateCoordinator
-
 
 @dataclass(slots=True, frozen=True)
 class AriosaMeasurements:
