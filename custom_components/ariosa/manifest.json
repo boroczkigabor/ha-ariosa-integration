@@ -1,0 +1,19 @@
+{
+  "domain": "ariosa",
+  "name": "Ariosa Ventilation",
+  "codeowners": [
+    "@boroczkigabor"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/boroczkigabor/ha-ariosa-integration",
+  "integration_type": "device",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/boroczkigabor/ha-ariosa-integration/issues",
+  "loggers": [
+    "pymodbus"
+  ],
+  "requirements": [
+    "pymodbus>=3.8.0"
+  ],
+  "version": "0.1.0"
+}

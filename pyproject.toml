@@ -1,0 +1,20 @@
+[project]
+name = "ha-ariosa-integration"
+version = "0.1.0"
+requires-python = ">=3.13"
+
+[tool.ruff]
+line-length = 88
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["ALL"]
+
+ignore = [
+    "D",
+    "COM812",
+    "ISC001"
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
