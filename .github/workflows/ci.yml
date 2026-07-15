@@ -22,7 +22,7 @@ jobs:
 
       - run: ruff check .
 
-      - run: ruff format --check .
+      - run: ruff format --check --output-format=full .
 
       - run: pip install -r requirements_dev.txt
 
