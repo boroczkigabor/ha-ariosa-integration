@@ -17,5 +17,48 @@
     "abort": {
       "already_configured": "Device is already configured."
     }
+  },
+  "entity": {
+    "sensor": {
+      "external_temperature": {
+        "name": "External temperature"
+      },
+      "external_humidity": {
+        "name": "External humidity"
+      },
+      "ejection_temperature": {
+        "name": "Ejection temperature"
+      },
+      "ejection_humidity": {
+        "name": "Ejection humidity"
+      },
+      "internal_temperature": {
+        "name": "Internal temperature"
+      },
+      "internal_humidity": {
+        "name": "Internal humidity"
+      },
+      "flow_temperature": {
+        "name": "Flow temperature"
+      },
+      "flow_humidity": {
+        "name": "Flow humidity"
+      },
+      "motor_1_rpm": {
+        "name": "Motor 1 speed"
+      },
+      "motor_2_rpm": {
+        "name": "Motor 2 speed"
+      },
+      "post_treatment": {
+        "name": "Post treatment"
+      },
+      "machine_days": {
+        "name": "Machine days"
+      },
+      "filter_hours": {
+        "name": "Filter hours"
+      }
+    }
   }
 }

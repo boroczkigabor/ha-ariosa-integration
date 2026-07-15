@@ -1,0 +1,64 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Ariosa szellőztető",
+        "description": "Az Ariosa szellőztető egység kapcsolatának beállítása",
+        "data": {
+          "host": "IP cím",
+          "port": "Port"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Nem sikerült csatlakozni az eszközhöz.",
+      "unknown": "Váratlan hiba történt."
+    },
+    "abort": {
+      "already_configured": "Az eszköz már konfigurálva van."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "external_temperature": {
+        "name": "Külső hőmérséklet"
+      },
+      "external_humidity": {
+        "name": "Külső páratartalom"
+      },
+      "ejection_temperature": {
+        "name": "Kidobott hőmérséklet"
+      },
+      "ejection_humidity": {
+        "name": "Kidobott páratartalom"
+      },
+      "internal_temperature": {
+        "name": "Belső hőmérséklet"
+      },
+      "internal_humidity": {
+        "name": "Belső páratartalom"
+      },
+      "flow_temperature": {
+        "name": "Befúvási hőmérséklet"
+      },
+      "flow_humidity": {
+        "name": "Befúvási páratartalom"
+      },
+      "motor_1_rpm": {
+        "name": "1. motor fordulatszáma"
+      },
+      "motor_2_rpm": {
+        "name": "2. motor fordulatszáma"
+      },
+      "post_treatment": {
+        "name": "Utókezelés"
+      },
+      "machine_days": {
+        "name": "Üzemnapok"
+      },
+      "filter_hours": {
+        "name": "Szűrő üzemóra"
+      }
+    }
+  }
+}

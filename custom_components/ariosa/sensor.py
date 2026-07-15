@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
-
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -36,7 +35,7 @@ class AriosaSensorEntityDescription(SensorEntityDescription):
 SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
     AriosaSensorEntityDescription(
         key="external_temperature",
-        name="External temperature",
+        translation_key="external_temperature",
         device_class=SensorDeviceClass.TEMPERATURE,
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         state_class=SensorStateClass.MEASUREMENT,
@@ -44,7 +43,7 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
     ),
     AriosaSensorEntityDescription(
         key="external_humidity",
-        name="External humidity",
+        translation_key="external_humidity",
         device_class=SensorDeviceClass.HUMIDITY,
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -52,7 +51,7 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
     ),
     AriosaSensorEntityDescription(
         key="ejection_temperature",
-        name="Ejection temperature",
+        translation_key="ejection_temperature",
         device_class=SensorDeviceClass.TEMPERATURE,
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         state_class=SensorStateClass.MEASUREMENT,
@@ -60,7 +59,7 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
     ),
     AriosaSensorEntityDescription(
         key="ejection_humidity",
-        name="Ejection humidity",
+        translation_key="ejection_humidity",
         device_class=SensorDeviceClass.HUMIDITY,
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -68,7 +67,7 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
     ),
     AriosaSensorEntityDescription(
         key="internal_temperature",
-        name="Internal temperature",
+        translation_key="internal_temperature",
         device_class=SensorDeviceClass.TEMPERATURE,
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         state_class=SensorStateClass.MEASUREMENT,
@@ -76,7 +75,7 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
     ),
     AriosaSensorEntityDescription(
         key="internal_humidity",
-        name="Internal humidity",
+        translation_key="internal_humidity",
         device_class=SensorDeviceClass.HUMIDITY,
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -84,7 +83,7 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
     ),
     AriosaSensorEntityDescription(
         key="flow_temperature",
-        name="Flow temperature",
+        translation_key="flow_temperature",
         device_class=SensorDeviceClass.TEMPERATURE,
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         state_class=SensorStateClass.MEASUREMENT,
@@ -92,7 +91,7 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
     ),
     AriosaSensorEntityDescription(
         key="flow_humidity",
-        name="Flow humidity",
+        translation_key="flow_humidity",
         device_class=SensorDeviceClass.HUMIDITY,
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -100,28 +99,28 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
     ),
     AriosaSensorEntityDescription(
         key="motor_1_rpm",
-        name="Motor 1 speed",
+        translation_key="motor_1_rpm",
         native_unit_of_measurement=REVOLUTIONS_PER_MINUTE,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.motor_1_rpm,
     ),
     AriosaSensorEntityDescription(
         key="motor_2_rpm",
-        name="Motor 2 speed",
+        translation_key="motor_2_rpm",
         native_unit_of_measurement=REVOLUTIONS_PER_MINUTE,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.motor_2_rpm,
     ),
     AriosaSensorEntityDescription(
         key="post_treatment",
-        name="Post treatment",
+        translation_key="post_treatment",
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.post_treatment,
     ),
     AriosaSensorEntityDescription(
         key="machine_days",
-        name="Machine days",
+        translation_key="machine_days",
         device_class=SensorDeviceClass.DURATION,
         native_unit_of_measurement=UnitOfTime.DAYS,
         state_class=SensorStateClass.TOTAL_INCREASING,
@@ -129,7 +128,7 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
     ),
     AriosaSensorEntityDescription(
         key="filter_hours",
-        name="Filter hours",
+        translation_key="filter_hours",
         device_class=SensorDeviceClass.DURATION,
         native_unit_of_measurement=UnitOfTime.HOURS,
         state_class=SensorStateClass.TOTAL_INCREASING,
