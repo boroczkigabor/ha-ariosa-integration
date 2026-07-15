@@ -2,6 +2,8 @@ from datetime import timedelta
 
 DOMAIN = "ariosa"
 
+MANUFACTURER = "Ariosa"
+
 DEFAULT_NAME = "Ariosa Ventilation"
 
 DEFAULT_PORT = 502

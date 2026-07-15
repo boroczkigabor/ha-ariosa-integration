@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
+
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -15,13 +16,12 @@ from homeassistant.const import (
     UnitOfTime,
 )
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import AriosaConfigEntry
 from .const import DOMAIN
 from .coordinator import AriosaDataUpdateCoordinator
+from .entity import AriosaEntity
 from .models import AriosaMeasurements
 
 
@@ -152,10 +152,8 @@ async def async_setup_entry(
     )
 
 
-class AriosaSensor(CoordinatorEntity[AriosaDataUpdateCoordinator], SensorEntity):
+class AriosaSensor(AriosaEntity, SensorEntity):
     """Representation of a single Ariosa measurement."""
-
-    _attr_has_entity_name = True
 
     entity_description: AriosaSensorEntityDescription
 
@@ -165,15 +163,10 @@ class AriosaSensor(CoordinatorEntity[AriosaDataUpdateCoordinator], SensorEntity)
             entry: AriosaConfigEntry,
             description: AriosaSensorEntityDescription,
     ) -> None:
-        super().__init__(coordinator)
+        super().__init__(coordinator, entry)
 
         self.entity_description = description
         self._attr_unique_id = f"{entry.entry_id}_{description.key}"
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, entry.entry_id)},
-            name=entry.title,
-            manufacturer="Ariosa",
-        )
 
     @property
     def native_value(self) -> float | int | None:
