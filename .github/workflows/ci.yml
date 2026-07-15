@@ -18,10 +18,10 @@ jobs:
         with:
           python-version: "3.14"
 
-      - run: pip install -r requirements_dev.txt
-
       - run: ruff check .
 
       - run: ruff format --check .
+
+      - run: pip install -r requirements_dev.txt
 
       - run: pytest

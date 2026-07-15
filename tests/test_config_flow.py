@@ -8,7 +8,10 @@ from custom_components.ariosa.const import DOMAIN
 
 
 async def test_config_flow_success(hass):
-    with patch("custom_components.ariosa.config_flow.AriosaClient") as client_cls:
+    with (
+        patch("custom_components.ariosa.config_flow.AriosaClient") as client_cls,
+        patch("custom_components.ariosa.AriosaClient", new=client_cls),
+    ):
         client = client_cls.return_value
 
         client.connect = AsyncMock()
@@ -30,3 +33,5 @@ async def test_config_flow_success(hass):
         )
 
         assert result2["type"] == "create_entry"
+
+        await hass.async_block_till_done()
