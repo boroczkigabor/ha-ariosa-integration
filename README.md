@@ -13,12 +13,20 @@ operational data.
 > [!WARNING]
 > This is still very much a work-in-progress, vibe-coded thingy.
 > Even though it only pulls data from the device and does not write
-> anything back, use with caution. 
+> anything back, use with caution.
 
 - UI-based setup (config flow) — no YAML required
 - Polls the unit every 10 seconds over Modbus TCP
 - Exposes 13 sensors covering temperatures, humidity, motor speeds, and
   maintenance counters
+- Three additional **calculated sensors** derived from the temperature
+  data: supply-side and exhaust-side heat recovery efficiency, and the
+  imbalance between the two
+- A **binary sensor** that infers whether the heat exchanger bypass is
+  likely active, based on temperature behavior
+- Built-in [diagnostics](https://www.home-assistant.io/integrations/diagnostics/)
+  support — download a snapshot of the config entry and latest readings
+  for bug reports
 - Available in English and Hungarian
 
 ## Requirements
@@ -28,10 +36,13 @@ operational data.
   interface (default port `502`)
 
 ## Supported devices
+
 The integration surely works with the following devices:
+
 - Valsir Ariosa HV 330 Enthalpic
 
-Feel free to confirm support for this integration on this issue: [1](https://github.com/boroczkigabor/ha-ariosa-integration/issues/1)
+Feel free to confirm support for this integration on this
+issue: [1](https://github.com/boroczkigabor/ha-ariosa-integration/issues/1)
 
 ## Installation
 
@@ -63,7 +74,7 @@ Configuration is done entirely through the UI:
 3. Enter the connection details:
 
    | Field | Description                                    | Default |
-   |-------|------------------------------------------------|---------|
+            |-------|------------------------------------------------|---------|
    | Host  | IP address or hostname of the ventilation unit | —       |
    | Port  | Modbus TCP port                                | `502`   |
 
@@ -92,6 +103,39 @@ different host.
 | Post treatment       | %    |                                |
 | Machine days         | d    | Total running days             |
 | Filter hours         | h    | Hours since last filter change |
+
+### Calculated sensors
+
+These aren't read from the device — they're derived from the temperature
+sensors above, using the standard heat-recovery temperature efficiency
+formulas (ODA = outdoor/external, SUP = supply/flow, ETA = extract/
+internal, EHA = exhaust/ejection).
+
+| Sensor                                | Unit | Formula                           | Notes                                                                                                                      |
+|---------------------------------------|------|-----------------------------------|----------------------------------------------------------------------------------------------------------------------------|
+| Supply-side heat recovery efficiency  | %    | `(SUP − ODA) / (ETA − ODA) × 100` | How much of the outdoor/room temperature gap the incoming air closed                                                       |
+| Exhaust-side heat recovery efficiency | %    | `(ETA − EHA) / (ETA − ODA) × 100` | How much of that gap was recovered from the outgoing stale air                                                             |
+| Heat recovery efficiency imbalance    | pts  | Supply-side − exhaust-side        | Near zero on a healthy unit; a growing gap can hint at a leak, unequal airflow, or sensor drift — not a diagnosis of which |
+
+The formulas work the same whether the unit is recovering heat (winter,
+outdoor colder than indoor) or recovering "coolness" (summer, outdoor
+warmer than indoor) — only the ratio matters, not the direction of the
+gap. All three report as *unknown* when the outdoor/room temperature
+gap is too small (< 0.5 °C) for the math to be meaningful.
+
+### Binary sensors
+
+| Sensor        | Notes                                                                                                                                                                                                                                                                                                                                                                                                        |
+|---------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Bypass active | Best-effort guess at whether the heat exchanger bypass is engaged, inferred from both efficiency sensors collapsing toward zero at the same time. This is a heuristic based on temperature behavior, **not** a read of the unit's actual bypass state (its Modbus register isn't working yet) — a partially-open/modulating bypass, a defrost cycle, or sensor drift can look similar. Shown as Open/Closed. |
+
+## Diagnostics
+
+From **Settings → Devices & Services → Ariosa Ventilation → ⋮ → Download
+diagnostics**, you can grab a snapshot containing the config entry's
+connection details, the latest successful poll's measurements, and
+whether the last update succeeded — handy to attach when reporting an
+issue.
 
 ## Contributing
 
