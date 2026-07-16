@@ -4,9 +4,9 @@ import pytest
 
 from custom_components.ariosa.models import AriosaMeasurements
 from custom_components.ariosa.sensor import (
-    _efficiency_imbalance,
-    _exhaust_side_efficiency,
-    _supply_side_efficiency,
+    efficiency_imbalance,
+    exhaust_side_efficiency,
+    supply_side_efficiency,
 )
 
 # A physically realistic winter scenario: cold outdoor air, warm indoor air,
@@ -50,18 +50,18 @@ SUMMER_MEASUREMENTS = AriosaMeasurements(
 
 def test_supply_side_efficiency_realistic() -> None:
     # (18 - 0) / (21 - 0) * 100
-    result = _supply_side_efficiency(REALISTIC_MEASUREMENTS)
+    result = supply_side_efficiency(REALISTIC_MEASUREMENTS)
     assert result == pytest.approx(85.7, abs=0.05)
 
 
 def test_exhaust_side_efficiency_realistic() -> None:
     # (21 - 3) / (21 - 0) * 100
-    result = _exhaust_side_efficiency(REALISTIC_MEASUREMENTS)
+    result = exhaust_side_efficiency(REALISTIC_MEASUREMENTS)
     assert result == pytest.approx(85.7, abs=0.05)
 
 
 def test_efficiency_imbalance_realistic() -> None:
-    assert _efficiency_imbalance(REALISTIC_MEASUREMENTS) == pytest.approx(0.0, abs=0.1)
+    assert efficiency_imbalance(REALISTIC_MEASUREMENTS) == pytest.approx(0.0, abs=0.1)
 
 
 def test_supply_side_efficiency_summer() -> None:
@@ -69,18 +69,18 @@ def test_supply_side_efficiency_summer() -> None:
     the ratio math should give a sensible result either direction.
     """
     # (27 - 32) / (24 - 32) * 100
-    result = _supply_side_efficiency(SUMMER_MEASUREMENTS)
+    result = supply_side_efficiency(SUMMER_MEASUREMENTS)
     assert result == pytest.approx(62.5, abs=0.05)
 
 
 def test_exhaust_side_efficiency_summer() -> None:
     # (24 - 29) / (24 - 32) * 100
-    result = _exhaust_side_efficiency(SUMMER_MEASUREMENTS)
+    result = exhaust_side_efficiency(SUMMER_MEASUREMENTS)
     assert result == pytest.approx(62.5, abs=0.05)
 
 
 def test_efficiency_imbalance_summer() -> None:
-    assert _efficiency_imbalance(SUMMER_MEASUREMENTS) == pytest.approx(0.0, abs=0.1)
+    assert efficiency_imbalance(SUMMER_MEASUREMENTS) == pytest.approx(0.0, abs=0.1)
 
 
 def test_efficiencies_are_none_when_temperature_spread_too_small() -> None:
@@ -91,6 +91,6 @@ def test_efficiencies_are_none_when_temperature_spread_too_small() -> None:
 
     data = replace(REALISTIC_MEASUREMENTS, internal_temperature=0.1)
 
-    assert _supply_side_efficiency(data) is None
-    assert _exhaust_side_efficiency(data) is None
-    assert _efficiency_imbalance(data) is None
+    assert supply_side_efficiency(data) is None
+    assert exhaust_side_efficiency(data) is None
+    assert efficiency_imbalance(data) is None
