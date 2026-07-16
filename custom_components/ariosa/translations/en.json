@@ -58,6 +58,15 @@
       },
       "filter_hours": {
         "name": "Filter hours"
+      },
+      "supply_side_efficiency": {
+        "name": "Supply-side heat recovery efficiency"
+      },
+      "exhaust_side_efficiency": {
+        "name": "Exhaust-side heat recovery efficiency"
+      },
+      "efficiency_imbalance": {
+        "name": "Heat recovery efficiency imbalance"
       }
     }
   }

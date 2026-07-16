@@ -18,9 +18,9 @@ class AriosaEntity(CoordinatorEntity[AriosaDataUpdateCoordinator]):
     _attr_has_entity_name = True
 
     def __init__(
-            self,
-            coordinator: AriosaDataUpdateCoordinator,
-            entry: AriosaConfigEntry,
+        self,
+        coordinator: AriosaDataUpdateCoordinator,
+        entry: AriosaConfigEntry,
     ) -> None:
         super().__init__(coordinator)
 

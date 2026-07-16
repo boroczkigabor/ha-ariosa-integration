@@ -29,7 +29,65 @@ from .models import AriosaMeasurements
 class AriosaSensorEntityDescription(SensorEntityDescription):
     """Describes an Ariosa sensor entity."""
 
-    value_fn: Callable[[AriosaMeasurements], float | int]
+    value_fn: Callable[[AriosaMeasurements], float | int | None]
+
+
+# Below this outdoor/room temperature gap (°C), the efficiency formulas
+# become numerically unstable (dividing by a near-zero denominator), so we
+# report "unknown" rather than a meaningless or wildly noisy percentage.
+_EFFICIENCY_MIN_TEMPERATURE_SPREAD = 0.5
+
+
+def _supply_side_efficiency(data: AriosaMeasurements) -> float | None:
+    """Efficiency from the incoming (supply) air's point of view.
+
+    How much of the outdoor-to-room temperature gap the supply air actually
+    gained by the time it reaches the room, after the heat exchanger.
+    """
+
+    denominator = data.internal_temperature - data.external_temperature
+
+    if abs(denominator) < _EFFICIENCY_MIN_TEMPERATURE_SPREAD:
+        return None
+
+    efficiency = (data.flow_temperature - data.external_temperature) / denominator
+
+    return round(efficiency * 100, 1)
+
+
+def _exhaust_side_efficiency(data: AriosaMeasurements) -> float | None:
+    """Efficiency from the outgoing (exhaust) air's point of view.
+
+    How much of the outdoor-to-room temperature gap was actually recovered
+    from the stale air before it's expelled outside.
+    """
+
+    denominator = data.internal_temperature - data.external_temperature
+
+    if abs(denominator) < _EFFICIENCY_MIN_TEMPERATURE_SPREAD:
+        return None
+
+    efficiency = (data.internal_temperature - data.ejection_temperature) / denominator
+
+    return round(efficiency * 100, 1)
+
+
+def _efficiency_imbalance(data: AriosaMeasurements) -> float | None:
+    """Gap between the supply-side and exhaust-side efficiency, in points.
+
+    A healthy, sealed unit keeps this close to zero. A growing gap can
+    indicate a bypass/leak, unequal supply vs. extract airflow, or sensor
+    drift — but not which of those it is; it's a "go take a look" signal,
+    not a diagnosis.
+    """
+
+    supply = _supply_side_efficiency(data)
+    exhaust = _exhaust_side_efficiency(data)
+
+    if supply is None or exhaust is None:
+        return None
+
+    return round(supply - exhaust, 1)
 
 
 SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
@@ -134,13 +192,34 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
         state_class=SensorStateClass.TOTAL_INCREASING,
         value_fn=lambda data: data.filter_hours,
     ),
+    AriosaSensorEntityDescription(
+        key="supply_side_efficiency",
+        translation_key="supply_side_efficiency",
+        native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=_supply_side_efficiency,
+    ),
+    AriosaSensorEntityDescription(
+        key="exhaust_side_efficiency",
+        translation_key="exhaust_side_efficiency",
+        native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=_exhaust_side_efficiency,
+    ),
+    AriosaSensorEntityDescription(
+        key="efficiency_imbalance",
+        translation_key="efficiency_imbalance",
+        native_unit_of_measurement=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=_efficiency_imbalance,
+    ),
 )
 
 
 async def async_setup_entry(
-        hass: HomeAssistant,
-        entry: AriosaConfigEntry,
-        async_add_entities: AddEntitiesCallback,
+    hass: HomeAssistant,
+    entry: AriosaConfigEntry,
+    async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up Ariosa sensors from a config entry."""
 
@@ -158,10 +237,10 @@ class AriosaSensor(AriosaEntity, SensorEntity):
     entity_description: AriosaSensorEntityDescription
 
     def __init__(
-            self,
-            coordinator: AriosaDataUpdateCoordinator,
-            entry: AriosaConfigEntry,
-            description: AriosaSensorEntityDescription,
+        self,
+        coordinator: AriosaDataUpdateCoordinator,
+        entry: AriosaConfigEntry,
+        description: AriosaSensorEntityDescription,
     ) -> None:
         super().__init__(coordinator, entry)
 

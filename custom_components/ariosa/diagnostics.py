@@ -11,8 +11,8 @@ from .coordinator import AriosaDataUpdateCoordinator
 
 
 async def async_get_config_entry_diagnostics(
-        hass: HomeAssistant,
-        entry: AriosaConfigEntry,
+    hass: HomeAssistant,
+    entry: AriosaConfigEntry,
 ) -> dict[str, Any]:
     """Return diagnostics for a config entry."""
 

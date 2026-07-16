@@ -3,9 +3,9 @@
     "step": {
       "user": {
         "title": "Ariosa szellőztető",
-        "description": "Az Ariosa szellőztető egység kapcsolatának beállítása",
+        "description": "Az Ariosa szellőztető egység kapcsolatának beállítása.",
         "data": {
-          "host": "IP cím",
+          "host": "Állomásnév",
           "port": "Port"
         }
       }
@@ -27,10 +27,10 @@
         "name": "Külső páratartalom"
       },
       "ejection_temperature": {
-        "name": "Kidobott hőmérséklet"
+        "name": "Kivezetett hőmérséklet"
       },
       "ejection_humidity": {
-        "name": "Kidobott páratartalom"
+        "name": "Kivezetett páratartalom"
       },
       "internal_temperature": {
         "name": "Belső hőmérséklet"
@@ -58,6 +58,15 @@
       },
       "filter_hours": {
         "name": "Szűrő üzemóra"
+      },
+      "supply_side_efficiency": {
+        "name": "Hővisszanyerési hatásfok (befúvás oldali)"
+      },
+      "exhaust_side_efficiency": {
+        "name": "Hővisszanyerési hatásfok (elszívás oldali)"
+      },
+      "efficiency_imbalance": {
+        "name": "Hővisszanyerési hatásfok eltérése"
       }
     }
   }
