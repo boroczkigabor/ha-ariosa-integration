@@ -10,6 +10,11 @@ operational data.
 
 ## Features
 
+> [!WARNING]
+> This is still very much a work-in-progress, vibe-coded thingy.
+> Even though it only pulls data from the device and does not write
+> anything back, use with caution. 
+
 - UI-based setup (config flow) — no YAML required
 - Polls the unit every 10 seconds over Modbus TCP
 - Exposes 13 sensors covering temperatures, humidity, motor speeds, and
@@ -21,6 +26,12 @@ operational data.
 - Home Assistant 2026.1.0 or newer
 - Network access from Home Assistant to the ventilation unit's Modbus TCP
   interface (default port `502`)
+
+## Supported devices
+The integration surely works with the following devices:
+- Valsir Ariosa HV 330 Enthalpic
+
+Feel free to confirm support for this integration on this issue: (1)[https://github.com/boroczkigabor/ha-ariosa-integration/issues/1]
 
 ## Installation
 
