@@ -28,4 +28,4 @@ REGISTER_MOTOR_2_RPM = 9
 REGISTER_POST_TRTMT = 10
 REGISTER_MACHINE_DAYS = 11
 REGISTER_FILTER_HOURS = 12
-PLATFORMS: list[str] = ["sensor"]
+PLATFORMS: list[str] = ["sensor", "binary_sensor"]

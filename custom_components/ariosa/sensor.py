@@ -19,6 +19,11 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import AriosaConfigEntry
+from .calculations import (
+    efficiency_imbalance,
+    exhaust_side_efficiency,
+    supply_side_efficiency,
+)
 from .const import DOMAIN
 from .coordinator import AriosaDataUpdateCoordinator
 from .entity import AriosaEntity
@@ -30,69 +35,6 @@ class AriosaSensorEntityDescription(SensorEntityDescription):
     """Describes an Ariosa sensor entity."""
 
     value_fn: Callable[[AriosaMeasurements], float | int | None]
-
-
-# Below this outdoor/room temperature gap (°C), the efficiency formulas
-# become numerically unstable (dividing by a near-zero denominator), so we
-# report "unknown" rather than a meaningless or wildly noisy percentage.
-_EFFICIENCY_MIN_TEMPERATURE_SPREAD = 0.5
-
-
-def _supply_side_efficiency(data: AriosaMeasurements) -> float | None:
-    """Efficiency from the incoming (supply) air's point of view.
-
-    How much of the outdoor-to-room temperature gap the supply air closed
-    by the time it reaches the room, after the heat exchanger. Works the
-    same whether the unit is recovering heat (outdoor colder than indoor,
-    winter) or recovering "coolness" (outdoor warmer than indoor, summer)
-    — only the ratio matters, not which direction the gap runs.
-    """
-
-    denominator = data.internal_temperature - data.external_temperature
-
-    if abs(denominator) < _EFFICIENCY_MIN_TEMPERATURE_SPREAD:
-        return None
-
-    efficiency = (data.flow_temperature - data.external_temperature) / denominator
-
-    return round(efficiency * 100, 1)
-
-
-def _exhaust_side_efficiency(data: AriosaMeasurements) -> float | None:
-    """Efficiency from the outgoing (exhaust) air's point of view.
-
-    How much of the outdoor-to-room temperature gap was actually
-    transferred out of the stale air before it's expelled outside. Same
-    formula regardless of heating or cooling season — see
-    `_supply_side_efficiency`.
-    """
-
-    denominator = data.internal_temperature - data.external_temperature
-
-    if abs(denominator) < _EFFICIENCY_MIN_TEMPERATURE_SPREAD:
-        return None
-
-    efficiency = (data.internal_temperature - data.ejection_temperature) / denominator
-
-    return round(efficiency * 100, 1)
-
-
-def _efficiency_imbalance(data: AriosaMeasurements) -> float | None:
-    """Gap between the supply-side and exhaust-side efficiency, in points.
-
-    A healthy, sealed unit keeps this close to zero. A growing gap can
-    indicate a bypass/leak, unequal supply vs. extract airflow, or sensor
-    drift — but not which of those it is; it's a "go take a look" signal,
-    not a diagnosis.
-    """
-
-    supply = _supply_side_efficiency(data)
-    exhaust = _exhaust_side_efficiency(data)
-
-    if supply is None or exhaust is None:
-        return None
-
-    return round(supply - exhaust, 1)
 
 
 SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
@@ -202,21 +144,21 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
         translation_key="supply_side_efficiency",
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
-        value_fn=_supply_side_efficiency,
+        value_fn=supply_side_efficiency,
     ),
     AriosaSensorEntityDescription(
         key="exhaust_side_efficiency",
         translation_key="exhaust_side_efficiency",
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
-        value_fn=_exhaust_side_efficiency,
+        value_fn=exhaust_side_efficiency,
     ),
     AriosaSensorEntityDescription(
         key="efficiency_imbalance",
         translation_key="efficiency_imbalance",
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
-        value_fn=_efficiency_imbalance,
+        value_fn=efficiency_imbalance,
     ),
 )
 

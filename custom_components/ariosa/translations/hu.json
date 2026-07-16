@@ -68,6 +68,11 @@
       "efficiency_imbalance": {
         "name": "Hővisszanyerési hatásfok eltérése"
       }
+    },
+    "binary_sensor": {
+      "bypass_active": {
+        "name": "Bypass aktív"
+      }
     }
   }
 }

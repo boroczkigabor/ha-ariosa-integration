@@ -68,6 +68,11 @@
       "efficiency_imbalance": {
         "name": "Heat recovery efficiency imbalance"
       }
+    },
+    "binary_sensor": {
+      "bypass_active": {
+        "name": "Bypass active"
+      }
     }
   }
 }
