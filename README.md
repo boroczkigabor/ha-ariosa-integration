@@ -31,7 +31,7 @@ operational data.
 The integration surely works with the following devices:
 - Valsir Ariosa HV 330 Enthalpic
 
-Feel free to confirm support for this integration on this issue: (1)[https://github.com/boroczkigabor/ha-ariosa-integration/issues/1]
+Feel free to confirm support for this integration on this issue: [1](https://github.com/boroczkigabor/ha-ariosa-integration/issues/1)
 
 ## Installation
 
