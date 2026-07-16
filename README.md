@@ -73,7 +73,7 @@ Configuration is done entirely through the UI:
 2. Search for **Ariosa Ventilation**.
 3. Enter the connection details:
 
-   | Field | Description                                    | Default |
+   | Field | Description                                    | Default | 
             |-------|------------------------------------------------|---------|
    | Host  | IP address or hostname of the ventilation unit | —       |
    | Port  | Modbus TCP port                                | `502`   |
