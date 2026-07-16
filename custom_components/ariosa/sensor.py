@@ -41,8 +41,11 @@ _EFFICIENCY_MIN_TEMPERATURE_SPREAD = 0.5
 def _supply_side_efficiency(data: AriosaMeasurements) -> float | None:
     """Efficiency from the incoming (supply) air's point of view.
 
-    How much of the outdoor-to-room temperature gap the supply air actually
-    gained by the time it reaches the room, after the heat exchanger.
+    How much of the outdoor-to-room temperature gap the supply air closed
+    by the time it reaches the room, after the heat exchanger. Works the
+    same whether the unit is recovering heat (outdoor colder than indoor,
+    winter) or recovering "coolness" (outdoor warmer than indoor, summer)
+    — only the ratio matters, not which direction the gap runs.
     """
 
     denominator = data.internal_temperature - data.external_temperature
@@ -58,8 +61,10 @@ def _supply_side_efficiency(data: AriosaMeasurements) -> float | None:
 def _exhaust_side_efficiency(data: AriosaMeasurements) -> float | None:
     """Efficiency from the outgoing (exhaust) air's point of view.
 
-    How much of the outdoor-to-room temperature gap was actually recovered
-    from the stale air before it's expelled outside.
+    How much of the outdoor-to-room temperature gap was actually
+    transferred out of the stale air before it's expelled outside. Same
+    formula regardless of heating or cooling season — see
+    `_supply_side_efficiency`.
     """
 
     denominator = data.internal_temperature - data.external_temperature
