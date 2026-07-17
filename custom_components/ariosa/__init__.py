@@ -1,5 +1,5 @@
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_HOST, CONF_PORT
+from homeassistant.const import CONF_HOST, CONF_PORT, CONF_SLAVE
 from homeassistant.core import HomeAssistant
 from .const import DOMAIN, PLATFORMS
 from .coordinator import AriosaDataUpdateCoordinator
@@ -24,6 +24,7 @@ async def async_setup_entry(
     client = AriosaClient(
         host=entry.data[CONF_HOST],
         port=entry.data[CONF_PORT],
+        slave=entry.data[CONF_SLAVE],
     )
 
     coord = AriosaDataUpdateCoordinator(

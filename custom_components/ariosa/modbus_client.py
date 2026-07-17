@@ -26,12 +26,7 @@ from .models import AriosaMeasurements
 class AriosaClient:
     """Ariosa Modbus TCP client."""
 
-    def __init__(
-        self,
-        host: str,
-        port: int,
-        slave: int = DEFAULT_SLAVE,
-    ) -> None:
+    def __init__(self, host: str, port: int, slave: int) -> None:
         self._host = host
         self._port = port
         self._slave = slave

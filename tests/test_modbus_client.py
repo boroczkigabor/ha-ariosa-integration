@@ -95,7 +95,7 @@ async def test_read_inputs() -> None:
 
         client_cls.return_value = client
 
-        ariosa = AriosaClient("127.0.0.1", 502)
+        ariosa = AriosaClient("127.0.0.1", 502, 1)
 
         data = await ariosa.read_inputs()
 

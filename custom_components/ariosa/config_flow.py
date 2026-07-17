@@ -6,8 +6,8 @@ from typing import Any
 import voluptuous as vol
 
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
-from homeassistant.const import CONF_HOST, CONF_PORT
-from .const import DEFAULT_NAME, DEFAULT_PORT, DOMAIN
+from homeassistant.const import CONF_HOST, CONF_PORT, CONF_SLAVE
+from .const import DEFAULT_NAME, DEFAULT_PORT, DOMAIN, DEFAULT_SLAVE
 from .exceptions import AriosaError
 from .modbus_client import AriosaClient
 
@@ -18,6 +18,7 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_HOST): str,
         vol.Optional(CONF_PORT, default=DEFAULT_PORT): int,
+        vol.Optional(CONF_SLAVE, default=DEFAULT_SLAVE): int,
     }
 )
 
@@ -42,6 +43,7 @@ class AriosaConfigFlow(ConfigFlow, domain=DOMAIN):
             client = AriosaClient(
                 host=user_input[CONF_HOST],
                 port=user_input[CONF_PORT],
+                slave=user_input[CONF_SLAVE],
             )
 
             try:
