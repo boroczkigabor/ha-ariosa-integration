@@ -10,7 +10,7 @@ DEFAULT_PORT = 502
 
 DEFAULT_SLAVE = 1
 
-UPDATE_INTERVAL = timedelta(seconds=10)
+UPDATE_INTERVAL = timedelta(seconds=30)
 
 START_REGISTER = 100
 
