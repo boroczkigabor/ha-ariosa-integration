@@ -10,11 +10,6 @@ operational data.
 
 ## Features
 
-> [!WARNING]
-> This is still very much a work-in-progress, vibe-coded thingy.
-> Even though it only pulls data from the device and does not write
-> anything back, use with caution.
-
 - UI-based setup (config flow) — no YAML required
 - Polls the unit every 10 seconds over Modbus TCP
 - Exposes 13 sensors covering temperatures, humidity, motor speeds, and
@@ -22,6 +17,8 @@ operational data.
 - Three additional **calculated sensors** derived from the temperature
   data: supply-side and exhaust-side heat recovery efficiency, and the
   imbalance between the two
+- An optional **temperature waste sensor**, comparing the internal
+  temperature against a reference temperature entity of your choice
 - A **binary sensor** that infers whether the heat exchanger bypass is
   likely active, based on temperature behavior
 - Built-in [diagnostics](https://www.home-assistant.io/integrations/diagnostics/)
@@ -73,10 +70,11 @@ Configuration is done entirely through the UI:
 2. Search for **Ariosa Ventilation**.
 3. Enter the connection details:
 
-   | Field | Description                                    | Default | 
-   |-------|------------------------------------------------|---------|
-   | Host  | IP address or hostname of the ventilation unit | —       |
-   | Port  | Modbus TCP port                                | `502`   |
+   | Field                        | Description                                                                                                    | Default    |
+            |------------------------------|----------------------------------------------------------------------------------------------------------------|------------|
+   | Host                         | IP address or hostname of the ventilation unit                                                                 | —          |
+   | Port                         | Modbus TCP port                                                                                                | `502`      |
+   | Reference temperature entity | Optional — an existing temperature entity to compare against. See [below](#temperature-waste-sensor-optional). | — (none)   |
 
 4. Home Assistant will attempt to connect and read the unit's registers
    before creating the entry — if this fails, double-check the host/port
@@ -85,6 +83,16 @@ Configuration is done entirely through the UI:
 
 Multiple ventilation units can be added by repeating the process with a
 different host.
+
+### Changing settings later
+
+The reference temperature entity can be set, changed, or cleared at any
+time without re-adding the integration:
+
+**Settings → Devices & Services → Ariosa Ventilation → Configure**
+
+Saving reloads the entry automatically, so the temperature waste sensor
+appears or disappears immediately to match.
 
 ## Entities
 
@@ -122,6 +130,32 @@ outdoor colder than indoor) or recovering "coolness" (summer, outdoor
 warmer than indoor) — only the ratio matters, not the direction of the
 gap. All three report as *unknown* when the outdoor/room temperature
 gap is too small (< 0.5 °C) for the math to be meaningful.
+
+### Temperature waste sensor (optional)
+
+If a **reference temperature entity** is configured (see
+[Configuration](#configuration)), an additional sensor is created:
+
+| Sensor                          | Unit | Formula                                | Notes                                                                                                                                                 |
+|---------------------------------|------|----------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Temperature waste vs. reference | °C   | `\|Internal temperature − reference\|` | How far the extracted room air deviates from whatever reference you're tracking — e.g. a thermostat's target or setpoint, or a sensor in another room |
+
+Notes on how it behaves:
+
+- Not tied to a specific reference entity type — anything reporting a
+  numeric temperature-like state works, e.g. a room thermostat's current
+  or target temperature, another integration's temperature sensor, or a
+  `sensor` created by a template/helper.
+- Works correctly with negative values and across 0 °C in either
+  direction — it's a plain absolute difference, so the sign of the
+  internal temperature, the reference, or both doesn't matter.
+- Updates immediately when the reference entity changes, not just on the
+  unit's regular poll.
+- Reports as *unknown* while the reference entity is unavailable, unknown,
+  or has a non-numeric state, rather than showing a stale or misleading
+  value.
+- Without a reference entity configured, this sensor simply doesn't
+  exist — it isn't shown as unavailable.
 
 ### Binary sensors
 
