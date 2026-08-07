@@ -4,10 +4,17 @@ import logging
 from typing import Any
 
 import voluptuous as vol
-
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 from homeassistant.const import CONF_HOST, CONF_PORT, CONF_SLAVE
-from .const import DEFAULT_NAME, DEFAULT_PORT, DOMAIN, DEFAULT_SLAVE
+from homeassistant.helpers import selector
+
+from .const import (
+    CONF_REFERENCE_TEMPERATURE_ENTITY,
+    DEFAULT_NAME,
+    DEFAULT_PORT,
+    DEFAULT_SLAVE,
+    DOMAIN,
+)
 from .exceptions import AriosaError
 from .modbus_client import AriosaClient
 
@@ -19,6 +26,9 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
         vol.Required(CONF_HOST): str,
         vol.Optional(CONF_PORT, default=DEFAULT_PORT): int,
         vol.Optional(CONF_SLAVE, default=DEFAULT_SLAVE): int,
+        vol.Optional(CONF_REFERENCE_TEMPERATURE_ENTITY): selector.EntitySelector(
+            selector.EntitySelectorConfig(domain="sensor", device_class="temperature")
+        ),
     }
 )
 
@@ -37,6 +47,13 @@ class AriosaConfigFlow(ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
 
         if user_input is not None:
+            # The entity selector can submit an empty string when the
+            # optional field is left blank; normalize that to "not set" so
+            # `entry.data.get(CONF_REFERENCE_TEMPERATURE_ENTITY)` is a
+            # reliable truthy/falsy check for the sensor platform.
+            if not user_input.get(CONF_REFERENCE_TEMPERATURE_ENTITY):
+                user_input.pop(CONF_REFERENCE_TEMPERATURE_ENTITY, None)
+
             await self.async_set_unique_id(user_input[CONF_HOST])
             self._abort_if_unique_id_configured()
 

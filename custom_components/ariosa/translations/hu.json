@@ -6,7 +6,11 @@
         "description": "Az Ariosa szellőztető egység kapcsolatának beállítása.",
         "data": {
           "host": "Állomásnév",
-          "port": "Port"
+          "port": "Port",
+          "reference_temperature_entity": "Belső hőmérséklet referencia (opcionális)"
+        },
+        "data_description": {
+          "reference_temperature_entity": "Egy meglévő hőmérséklet entitás, amelyhez a készülék által mért belső hőmérséklet viszonyítva lesz, pl. egy szobatermosztát érzékelője. A hőveszteség számításához szükséges, míg az elszívott levegő a gépbe ér."
         }
       }
     },
@@ -67,6 +71,9 @@
       },
       "efficiency_imbalance": {
         "name": "Hővisszanyerési hatásfok eltérése"
+      },
+      "temperature_waste": {
+        "name": "Belső hőmérséklet veszteség"
       }
     },
     "binary_sensor": {

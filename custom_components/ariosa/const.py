@@ -10,6 +10,11 @@ DEFAULT_PORT = 502
 
 DEFAULT_SLAVE = 1
 
+# Optional config-flow field: a user-supplied entity_id (typically another
+# sensor.* temperature entity) used as the reference value for the
+# "temperature waste" sensor. Not a fixed HA const, so it's defined here.
+CONF_REFERENCE_TEMPERATURE_ENTITY = "reference_temperature_entity"
+
 UPDATE_INTERVAL = timedelta(seconds=30)
 
 START_REGISTER = 100

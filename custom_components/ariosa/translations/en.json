@@ -6,7 +6,11 @@
         "description": "Configure connection to the Ariosa ventilation unit.",
         "data": {
           "host": "Host",
-          "port": "Port"
+          "port": "Port",
+          "reference_temperature_entity": "Reference temperature entity (optional)"
+        },
+        "data_description": {
+          "reference_temperature_entity": "An existing temperature entity to compare the internal temperature measured by the device against, e.g. a room thermostat sensor. Used for the calculating temperature waste in the air pipes."
         }
       }
     },
@@ -67,6 +71,9 @@
       },
       "efficiency_imbalance": {
         "name": "Heat recovery efficiency imbalance"
+      },
+      "temperature_waste": {
+        "name": "Temperature waste vs. reference"
       }
     },
     "binary_sensor": {
