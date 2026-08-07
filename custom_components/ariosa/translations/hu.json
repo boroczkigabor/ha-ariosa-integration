@@ -22,6 +22,19 @@
       "already_configured": "Az eszköz már konfigurálva van."
     }
   },
+  "options": {
+    "step": {
+      "init": {
+        "description": "Az Ariosa szellőztető egység beállításainak frissítése.",
+        "data": {
+          "reference_temperature_entity": "Belső hőmérséklet referencia (opcionális)"
+        },
+        "data_description": {
+          "reference_temperature_entity": "Egy meglévő hőmérséklet entitás, amelyhez a készülék által mért belső hőmérséklet viszonyítva lesz, pl. egy szobatermosztát érzékelője. A hőveszteség számításához szükséges, míg az elszívott levegő a gépbe ér."
+        }
+      }
+    }
+  },
   "entity": {
     "sensor": {
       "external_temperature": {
@@ -73,7 +86,7 @@
         "name": "Hővisszanyerési hatásfok eltérése"
       },
       "temperature_waste": {
-        "name": "Belső hőmérséklet veszteség"
+        "name": "Belső hőveszteség"
       }
     },
     "binary_sensor": {

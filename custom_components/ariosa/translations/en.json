@@ -22,6 +22,19 @@
       "already_configured": "Device is already configured."
     }
   },
+  "options": {
+    "step": {
+      "init": {
+        "description": "Update settings for the Ariosa ventilation unit.",
+        "data": {
+          "reference_temperature_entity": "Reference temperature entity (optional)"
+        },
+        "data_description": {
+          "reference_temperature_entity": "An existing temperature entity to compare the internal temperature measured by the device against, e.g. a room thermostat sensor. Used for the calculating temperature waste in the air pipes."
+        }
+      }
+    }
+  },
   "entity": {
     "sensor": {
       "external_temperature": {

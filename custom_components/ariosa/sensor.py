@@ -180,7 +180,13 @@ async def async_setup_entry(
         for description in SENSOR_DESCRIPTIONS
     ]
 
-    reference_entity_id = entry.data.get(CONF_REFERENCE_TEMPERATURE_ENTITY)
+    # Options is where a user-editable setting like this belongs; `data`
+    # is only checked as a fallback for entries created by the earlier
+    # version of this integration, which stored it in `data` because the
+    # options flow didn't exist yet.
+    reference_entity_id = entry.options.get(
+        CONF_REFERENCE_TEMPERATURE_ENTITY
+    ) or entry.data.get(CONF_REFERENCE_TEMPERATURE_ENTITY)
     if reference_entity_id:
         entities.append(
             AriosaTemperatureWasteSensor(coordinator, entry, reference_entity_id)
