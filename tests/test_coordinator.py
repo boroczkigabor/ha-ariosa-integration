@@ -24,6 +24,7 @@ async def test_update(hass):
         post_treatment=10,
         machine_days=100,
         filter_hours=250,
+        bypass_open=False,
     )
 
     coordinator = AriosaDataUpdateCoordinator(
