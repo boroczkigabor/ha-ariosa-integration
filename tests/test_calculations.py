@@ -25,6 +25,7 @@ REALISTIC_MEASUREMENTS = AriosaMeasurements(
     post_treatment=0,
     machine_days=100,
     filter_hours=50,
+    bypass_open=False,
 )
 
 # A physically realistic summer scenario: hot outdoor air, cooler indoor
@@ -45,6 +46,7 @@ SUMMER_MEASUREMENTS = AriosaMeasurements(
     post_treatment=0,
     machine_days=100,
     filter_hours=50,
+    bypass_open=False,
 )
 
 # Winter, but with the exchanger core bypassed: supply air stays close to
@@ -64,6 +66,7 @@ BYPASS_MEASUREMENTS = AriosaMeasurements(
     post_treatment=0,
     machine_days=100,
     filter_hours=50,
+    bypass_open=True,
 )
 
 

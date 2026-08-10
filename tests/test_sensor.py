@@ -1,8 +1,6 @@
-from unittest.mock import AsyncMock
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
-
 from homeassistant import config_entries
 from homeassistant.const import CONF_HOST, CONF_PORT
 
@@ -26,6 +24,7 @@ def measurements() -> AriosaMeasurements:
         post_treatment=25,
         machine_days=365,
         filter_hours=123,
+        bypass_open=False,
     )
 
 
