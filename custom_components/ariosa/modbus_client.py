@@ -1,22 +1,24 @@
 from __future__ import annotations
+
 from pymodbus.client import AsyncModbusTcpClient
 from pymodbus.exceptions import ModbusException
+
 from .const import (
-    DEFAULT_SLAVE,
+    REGISTER_BYPASS_OPEN,
     REGISTER_COUNT,
-    REGISTER_EXT_TEMP,
-    REGISTER_EXT_HUM,
-    REGISTER_EJECT_TEMP,
     REGISTER_EJECT_HUM,
-    REGISTER_INT_TEMP,
-    REGISTER_INT_HUM,
-    REGISTER_FLOW_TEMP,
+    REGISTER_EJECT_TEMP,
+    REGISTER_EXT_HUM,
+    REGISTER_EXT_TEMP,
+    REGISTER_FILTER_HOURS,
     REGISTER_FLOW_HUM,
+    REGISTER_FLOW_TEMP,
+    REGISTER_INT_HUM,
+    REGISTER_INT_TEMP,
+    REGISTER_MACHINE_DAYS,
     REGISTER_MOTOR_1_RPM,
     REGISTER_MOTOR_2_RPM,
     REGISTER_POST_TRTMT,
-    REGISTER_MACHINE_DAYS,
-    REGISTER_FILTER_HOURS,
     START_REGISTER,
 )
 from .exceptions import CannotConnect, ReadError
@@ -86,6 +88,7 @@ class AriosaClient:
             post_treatment=registers[REGISTER_POST_TRTMT],
             machine_days=registers[REGISTER_MACHINE_DAYS],
             filter_hours=registers[REGISTER_FILTER_HOURS],
+            bypass_open=self._boolean(registers[REGISTER_BYPASS_OPEN]),
         )
 
     @staticmethod
@@ -108,3 +111,8 @@ class AriosaClient:
             return value - 0x10000
 
         return value
+
+    @staticmethod
+    def _boolean(value: int) -> bool:
+        """Convert unsigned int16 to boolean."""
+        return bool(value)

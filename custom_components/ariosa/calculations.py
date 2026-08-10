@@ -85,32 +85,3 @@ def efficiency_imbalance(data: AriosaMeasurements) -> float | None:
 
     return round(supply - exhaust, 1)
 
-
-def bypass_likely_active(data: AriosaMeasurements) -> bool | None:
-    """Best-effort guess at whether the heat exchanger bypass is engaged.
-
-    This is inferred purely from temperature behavior — the unit's own
-    bypass Modbus register isn't being read successfully yet. When bypass
-    is active, incoming air passes the exchanger core largely untouched,
-    so both supply-side and exhaust-side efficiency should collapse
-    toward zero.
-
-    Returns None when the outdoor/room temperature gap is too small to
-    tell anything apart (efficiency itself is unknown in that case,
-    bypassed or not).
-
-    This is a heuristic, not a direct measurement: a partially-open or
-    modulating bypass, a defrost cycle, or sensor drift can look similar.
-    Treat it as a helpful hint, not a substitute for the real bypass
-    register once that's working.
-    """
-
-    supply, exhaust = _efficiencies(data)
-
-    if supply is None or exhaust is None:
-        return None
-
-    return (
-        abs(supply) < BYPASS_EFFICIENCY_THRESHOLD
-        and abs(exhaust) < BYPASS_EFFICIENCY_THRESHOLD
-    )

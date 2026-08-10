@@ -19,8 +19,7 @@ operational data.
   imbalance between the two
 - An optional **temperature waste sensor**, comparing the internal
   temperature against a reference temperature entity of your choice
-- A **binary sensor** that infers whether the heat exchanger bypass is
-  likely active, based on temperature behavior
+- A **binary sensor** that shows whether the heat exchanger bypass is open
 - Built-in [diagnostics](https://www.home-assistant.io/integrations/diagnostics/)
   support — download a snapshot of the config entry and latest readings
   for bug reports
@@ -71,7 +70,7 @@ Configuration is done entirely through the UI:
 3. Enter the connection details:
 
    | Field                        | Description                                                                                                    | Default    |
-            |------------------------------|----------------------------------------------------------------------------------------------------------------|------------|
+                     |------------------------------|----------------------------------------------------------------------------------------------------------------|------------|
    | Host                         | IP address or hostname of the ventilation unit                                                                 | —          |
    | Port                         | Modbus TCP port                                                                                                | `502`      |
    | Reference temperature entity | Optional — an existing temperature entity to compare against. See [below](#temperature-waste-sensor-optional). | — (none)   |
@@ -159,9 +158,9 @@ Notes on how it behaves:
 
 ### Binary sensors
 
-| Sensor        | Notes                                                                                                                                                                                                                                                                                                                                                                                                        |
-|---------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Bypass active | Best-effort guess at whether the heat exchanger bypass is engaged, inferred from both efficiency sensors collapsing toward zero at the same time. This is a heuristic based on temperature behavior, **not** a read of the unit's actual bypass state (its Modbus register isn't working yet) — a partially-open/modulating bypass, a defrost cycle, or sensor drift can look similar. Shown as Open/Closed. |
+| Sensor        | Notes                                                                |
+|---------------|----------------------------------------------------------------------|
+| Bypass active | Sensor for the device's  current bypass state. Shown as Open/Closed. |
 
 ## Diagnostics
 

@@ -12,7 +12,6 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import AriosaConfigEntry
-from .calculations import bypass_likely_active
 from .const import DOMAIN
 from .coordinator import AriosaDataUpdateCoordinator
 from .entity import AriosaEntity
@@ -31,7 +30,7 @@ BINARY_SENSOR_DESCRIPTIONS: tuple[AriosaBinarySensorEntityDescription, ...] = (
         key="bypass_active",
         translation_key="bypass_active",
         device_class=BinarySensorDeviceClass.OPENING,
-        value_fn=bypass_likely_active,
+        value_fn=lambda data: data.bypass_open,
     ),
 )
 

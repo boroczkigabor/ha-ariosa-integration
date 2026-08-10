@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
 
 
@@ -25,3 +26,5 @@ class AriosaMeasurements:
 
     machine_days: int
     filter_hours: int
+
+    bypass_open: bool

@@ -3,7 +3,6 @@ from dataclasses import replace
 import pytest
 
 from custom_components.ariosa.calculations import (
-    bypass_likely_active,
     efficiency_imbalance,
     exhaust_side_efficiency,
     supply_side_efficiency,
@@ -26,6 +25,7 @@ REALISTIC_MEASUREMENTS = AriosaMeasurements(
     post_treatment=0,
     machine_days=100,
     filter_hours=50,
+    bypass_open=False,
 )
 
 # A physically realistic summer scenario: hot outdoor air, cooler indoor
@@ -46,6 +46,7 @@ SUMMER_MEASUREMENTS = AriosaMeasurements(
     post_treatment=0,
     machine_days=100,
     filter_hours=50,
+    bypass_open=False,
 )
 
 # Winter, but with the exchanger core bypassed: supply air stays close to
@@ -65,6 +66,7 @@ BYPASS_MEASUREMENTS = AriosaMeasurements(
     post_treatment=0,
     machine_days=100,
     filter_hours=50,
+    bypass_open=True,
 )
 
 
@@ -115,27 +117,3 @@ def test_efficiencies_are_none_when_temperature_spread_too_small() -> None:
     assert exhaust_side_efficiency(data) is None
     assert efficiency_imbalance(data) is None
 
-
-def test_bypass_not_active_during_normal_operation() -> None:
-    assert bypass_likely_active(REALISTIC_MEASUREMENTS) is False
-    assert bypass_likely_active(SUMMER_MEASUREMENTS) is False
-
-
-def test_bypass_active_when_supply_and_exhaust_efficiency_both_low() -> None:
-    assert bypass_likely_active(BYPASS_MEASUREMENTS) is True
-
-
-def test_bypass_not_flagged_from_one_low_side_alone() -> None:
-    """An imbalance (one side low, the other high) points at a leak or
-    airflow problem, not bypass — both sides must be low to call it.
-    """
-
-    data = replace(BYPASS_MEASUREMENTS, ejection_temperature=3.0)
-
-    assert bypass_likely_active(data) is False
-
-
-def test_bypass_is_none_when_temperature_spread_too_small() -> None:
-    data = replace(REALISTIC_MEASUREMENTS, internal_temperature=0.1)
-
-    assert bypass_likely_active(data) is None
