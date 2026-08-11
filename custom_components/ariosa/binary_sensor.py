@@ -30,7 +30,7 @@ BINARY_SENSOR_DESCRIPTIONS: tuple[BinarySensorEntityDescription, ...] = (
     AriosaBinarySensorEntityDescription(
         key="pre_heater_status",
         translation_key="pre_heater_status",
-        device_class=BinarySensorDeviceClass.HEAT,
+        device_class=BinarySensorDeviceClass.POWER,
         value_fn=lambda data: data.pre_heater_status,
     ),
     AriosaBinarySensorEntityDescription(

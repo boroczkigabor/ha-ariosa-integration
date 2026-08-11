@@ -144,8 +144,8 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
         value_fn=lambda data: data.filter_hours,
     ),
     AriosaSensorEntityDescription(
-        key="season_state",
-        translation_key="season_state",
+        key="season",
+        translation_key="season",
         device_class=SensorDeviceClass.ENUM,
         options=list(SEASON_MODBUS_VALUES.values()),
         value_fn=lambda data: SEASON_MODBUS_VALUES.get(data.season_status),
