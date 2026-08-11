@@ -35,7 +35,7 @@ ALARM_ENTITY_IDS: dict[str, str] = {
     "motor_alarm": "binary_sensor.ariosa_ventilation_motor_alarm",
     "sensor_alarm": "binary_sensor.ariosa_ventilation_sensor_alarm",
     "motor_protection_alarm": "binary_sensor.ariosa_ventilation_motor_protection_alarm",
-    "pre_heater_alarm": "binary_sensor.ariosa_ventilation_preheater_alarm",
+    "preheater_alarm": "binary_sensor.ariosa_ventilation_preheater_alarm",
 }
 
 PRE_HEATER_STATUS_ENTITY_ID = "binary_sensor.ariosa_ventilation_preheater_status"
