@@ -8,25 +8,25 @@ from custom_components.ariosa.sensor import (
     supply_side_efficiency,
 )
 from tests.test_data import (
-    REALISTIC_MEASUREMENTS,
+    WINTER_MEASUREMENTS,
     SUMMER_MEASUREMENTS,
 )
 
 
-def test_supply_side_efficiency_realistic() -> None:
+def test_supply_side_efficiency_winter() -> None:
     # (18 - 0) / (21 - 0) * 100
-    result = supply_side_efficiency(REALISTIC_MEASUREMENTS)
+    result = supply_side_efficiency(WINTER_MEASUREMENTS)
     assert result == pytest.approx(85.7, abs=0.05)
 
 
-def test_exhaust_side_efficiency_realistic() -> None:
+def test_exhaust_side_efficiency_winter() -> None:
     # (21 - 3) / (21 - 0) * 100
-    result = exhaust_side_efficiency(REALISTIC_MEASUREMENTS)
+    result = exhaust_side_efficiency(WINTER_MEASUREMENTS)
     assert result == pytest.approx(85.7, abs=0.05)
 
 
-def test_efficiency_imbalance_realistic() -> None:
-    assert efficiency_imbalance(REALISTIC_MEASUREMENTS) == pytest.approx(0.0, abs=0.1)
+def test_efficiency_imbalance_winter() -> None:
+    assert efficiency_imbalance(WINTER_MEASUREMENTS) == pytest.approx(0.0, abs=0.1)
 
 
 def test_supply_side_efficiency_summer() -> None:
@@ -54,7 +54,7 @@ def test_efficiencies_are_none_when_temperature_spread_too_small() -> None:
     rather than a noisy or meaningless percentage.
     """
 
-    data = replace(REALISTIC_MEASUREMENTS, internal_temperature=0.1)
+    data = replace(WINTER_MEASUREMENTS, internal_temperature=0.1)
 
     assert supply_side_efficiency(data) is None
     assert exhaust_side_efficiency(data) is None

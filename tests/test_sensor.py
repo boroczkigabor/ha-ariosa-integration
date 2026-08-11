@@ -6,12 +6,12 @@ from homeassistant.const import CONF_HOST, CONF_PORT
 
 from custom_components.ariosa.const import CONF_REFERENCE_TEMPERATURE_ENTITY, DOMAIN
 from custom_components.ariosa.models import AriosaMeasurements
-from tests.test_data import REALISTIC_MEASUREMENTS
+from tests.test_data import SUMMER_MEASUREMENTS
 
 
 @pytest.fixture
 def measurements() -> AriosaMeasurements:
-    return REALISTIC_MEASUREMENTS
+    return SUMMER_MEASUREMENTS
 
 
 async def test_sensors_created_with_correct_state(hass, measurements):
@@ -42,19 +42,19 @@ async def test_sensors_created_with_correct_state(hass, measurements):
         await hass.async_block_till_done()
 
         expected_states = {
-            "sensor.ariosa_ventilation_external_temperature": "23.5",
-            "sensor.ariosa_ventilation_external_humidity": "65.4",
-            "sensor.ariosa_ventilation_ejection_temperature": "20.0",
-            "sensor.ariosa_ventilation_ejection_humidity": "40.0",
-            "sensor.ariosa_ventilation_internal_temperature": "22.0",
-            "sensor.ariosa_ventilation_internal_humidity": "45.0",
-            "sensor.ariosa_ventilation_flow_temperature": "21.0",
-            "sensor.ariosa_ventilation_flow_humidity": "44.0",
+            "sensor.ariosa_ventilation_external_temperature": "32.5",
+            "sensor.ariosa_ventilation_external_humidity": "55.2",
+            "sensor.ariosa_ventilation_ejection_temperature": "29.4",
+            "sensor.ariosa_ventilation_ejection_humidity": "50.1",
+            "sensor.ariosa_ventilation_internal_temperature": "25.0",
+            "sensor.ariosa_ventilation_internal_humidity": "59.1",
+            "sensor.ariosa_ventilation_flow_temperature": "27.9",
+            "sensor.ariosa_ventilation_flow_humidity": "55.4",
             "sensor.ariosa_ventilation_motor_1_speed": "1200",
             "sensor.ariosa_ventilation_motor_2_speed": "1190",
             "sensor.ariosa_ventilation_post_treatment": "25",
-            "sensor.ariosa_ventilation_machine_days": "365",
-            "sensor.ariosa_ventilation_filter_hours": "123",
+            "sensor.ariosa_ventilation_machine_days": "100",
+            "sensor.ariosa_ventilation_filter_hours": "50",
             "sensor.ariosa_ventilation_supply_side_heat_recovery_efficiency": "166.7",
             "sensor.ariosa_ventilation_exhaust_side_heat_recovery_efficiency": "-133.3",
             "sensor.ariosa_ventilation_heat_recovery_efficiency_imbalance": "300.0",
@@ -104,9 +104,9 @@ async def test_temperature_waste_sensor_not_created_without_reference(
 
 
 async def test_temperature_waste_sensor_tracks_reference_entity(hass, measurements):
-    """internal_temperature=22.0; reference=18.5 -> waste == 3.5."""
+    """internal_temperature=25.0; reference=24.5 -> waste == 0.5."""
 
-    hass.states.async_set("sensor.room_reference", "18.5")
+    hass.states.async_set("sensor.room_reference", "24.5")
     await hass.async_block_till_done()
 
     with (
@@ -139,14 +139,14 @@ async def test_temperature_waste_sensor_tracks_reference_entity(hass, measuremen
         entity_id = "sensor.ariosa_ventilation_temperature_waste_vs_reference"
         state = hass.states.get(entity_id)
         assert state is not None
-        assert state.state == "3.5"
+        assert state.state == "0.5"
 
         # Moving the reference should update the waste sensor immediately,
         # without waiting for the next coordinator poll.
         hass.states.async_set("sensor.room_reference", "20.0")
         await hass.async_block_till_done()
 
-        assert hass.states.get(entity_id).state == "2.0"
+        assert hass.states.get(entity_id).state == "5.0"
 
         # An unavailable/unknown reference should yield an unknown state,
         # not a crash.

@@ -3,14 +3,14 @@ from unittest.mock import AsyncMock
 import pytest
 
 from custom_components.ariosa.coordinator import AriosaDataUpdateCoordinator
-from tests.test_data import REALISTIC_MEASUREMENTS
+from tests.test_data import SUMMER_MEASUREMENTS
 
 
 @pytest.mark.asyncio
 async def test_update(hass):
     client = AsyncMock()
 
-    client.read_inputs.return_value = REALISTIC_MEASUREMENTS
+    client.read_inputs.return_value = SUMMER_MEASUREMENTS
 
     coordinator = AriosaDataUpdateCoordinator(
         hass,
@@ -21,4 +21,4 @@ async def test_update(hass):
 
     assert coordinator.last_update_success
 
-    assert coordinator.data.external_temperature == 23.5
+    assert coordinator.data.external_temperature == 32.0

@@ -6,14 +6,12 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 from custom_components.ariosa.const import DOMAIN
 from custom_components.ariosa.coordinator import AriosaDataUpdateCoordinator
 from custom_components.ariosa.diagnostics import async_get_config_entry_diagnostics
-from tests.test_data import (
-    REALISTIC_MEASUREMENTS,
-)
+from tests.test_data import SUMMER_MEASUREMENTS
 
 
 async def test_diagnostics(hass):
     client = AsyncMock()
-    client.read_inputs.return_value = REALISTIC_MEASUREMENTS
+    client.read_inputs.return_value = SUMMER_MEASUREMENTS
 
     coordinator = AriosaDataUpdateCoordinator(hass, client)
     await coordinator.async_refresh()

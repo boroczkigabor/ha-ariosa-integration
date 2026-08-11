@@ -1,11 +1,11 @@
 from tests.test_data import (
-    REALISTIC_MEASUREMENTS,
+    WINTER_MEASUREMENTS,
 )
 
 
 def test_measurements_dataclass() -> None:
 
-    data = REALISTIC_MEASUREMENTS
+    data = WINTER_MEASUREMENTS
 
     assert data.external_temperature == 23.5
     assert data.external_humidity == 65.4
