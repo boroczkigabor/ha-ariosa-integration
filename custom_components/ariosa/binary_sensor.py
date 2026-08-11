@@ -32,12 +32,14 @@ BINARY_SENSOR_DESCRIPTIONS: tuple[BinarySensorEntityDescription, ...] = (
         translation_key="preheater_status",
         device_class=BinarySensorDeviceClass.POWER,
         value_fn=lambda data: data.preheater_status,
+        icon="mdi:radiator",
     ),
     AriosaBinarySensorEntityDescription(
         key="bypass_active",
         translation_key="bypass_active",
         device_class=BinarySensorDeviceClass.OPENING,
         value_fn=lambda data: data.bypass_open,
+        icon="mdi:arrow-decision-auto",
     ),
     AriosaAlarmSensorEntityDescription(
         key="general_alarm",

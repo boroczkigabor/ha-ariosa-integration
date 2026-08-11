@@ -112,6 +112,7 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
         native_unit_of_measurement=REVOLUTIONS_PER_MINUTE,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.motor_1_rpm,
+        icon="mdi:car-turbocharger",
     ),
     AriosaSensorEntityDescription(
         key="motor_2_rpm",
@@ -119,6 +120,7 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
         native_unit_of_measurement=REVOLUTIONS_PER_MINUTE,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.motor_2_rpm,
+        icon="mdi:car-turbocharger",
     ),
     AriosaSensorEntityDescription(
         key="post_treatment",
@@ -126,6 +128,7 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.post_treatment,
+        icon="mdi:valve",
     ),
     AriosaSensorEntityDescription(
         key="machine_days",
@@ -149,6 +152,7 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
         device_class=SensorDeviceClass.ENUM,
         options=list(SEASON_MODBUS_VALUES.values()),
         value_fn=lambda data: SEASON_MODBUS_VALUES.get(data.season_status),
+        icon="mdi:sun-snowflake-variant",
     ),
     AriosaSensorEntityDescription(
         key="supply_side_efficiency",
@@ -156,6 +160,7 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=supply_side_efficiency,
+        icon="mdi:gauge",
     ),
     AriosaSensorEntityDescription(
         key="exhaust_side_efficiency",
@@ -163,6 +168,7 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=exhaust_side_efficiency,
+        icon="mdi:gauge",
     ),
     AriosaSensorEntityDescription(
         key="efficiency_imbalance",
@@ -170,6 +176,7 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=efficiency_imbalance,
+        icon="mdi:scale-unbalanced",
     ),
 )
 
