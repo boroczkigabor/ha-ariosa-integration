@@ -57,7 +57,7 @@ async def test_sensors_created_with_correct_state(hass, measurements):
             "sensor.ariosa_ventilation_filter_hours": "50",
             "sensor.ariosa_ventilation_supply_side_heat_recovery_efficiency": "54.1",
             "sensor.ariosa_ventilation_exhaust_side_heat_recovery_efficiency": "63.5",
-            "sensor.ariosa_ventilation_heat_recovery_efficiency_imbalance": "9.4",
+            "sensor.ariosa_ventilation_heat_recovery_efficiency_imbalance": "-9.4",
         }
 
         for entity_id, expected_state in expected_states.items():
