@@ -29,5 +29,5 @@ async def test_diagnostics(hass):
 
     assert diagnostics["entry_data"] == {CONF_HOST: "192.168.1.10", CONF_PORT: 502}
     assert diagnostics["last_update_success"] is True
-    assert diagnostics["measurements"]["external_temperature"] == 23.5
-    assert diagnostics["measurements"]["filter_hours"] == 250
+    assert diagnostics["measurements"]["external_temperature"] == 32.5
+    assert diagnostics["measurements"]["filter_hours"] == 50

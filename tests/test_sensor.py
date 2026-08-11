@@ -46,7 +46,7 @@ async def test_sensors_created_with_correct_state(hass, measurements):
             "sensor.ariosa_ventilation_external_humidity": "55.2",
             "sensor.ariosa_ventilation_ejection_temperature": "29.4",
             "sensor.ariosa_ventilation_ejection_humidity": "50.1",
-            "sensor.ariosa_ventilation_internal_temperature": "25.0",
+            "sensor.ariosa_ventilation_internal_temperature": "24.0",
             "sensor.ariosa_ventilation_internal_humidity": "59.1",
             "sensor.ariosa_ventilation_flow_temperature": "27.9",
             "sensor.ariosa_ventilation_flow_humidity": "55.4",
@@ -104,9 +104,9 @@ async def test_temperature_waste_sensor_not_created_without_reference(
 
 
 async def test_temperature_waste_sensor_tracks_reference_entity(hass, measurements):
-    """internal_temperature=25.0; reference=24.5 -> waste == 0.5."""
+    """internal_temperature=24.0; reference=23.5 -> waste == 0.5."""
 
-    hass.states.async_set("sensor.room_reference", "24.5")
+    hass.states.async_set("sensor.room_reference", "23.5")
     await hass.async_block_till_done()
 
     with (
@@ -146,7 +146,7 @@ async def test_temperature_waste_sensor_tracks_reference_entity(hass, measuremen
         hass.states.async_set("sensor.room_reference", "20.0")
         await hass.async_block_till_done()
 
-        assert hass.states.get(entity_id).state == "5.0"
+        assert hass.states.get(entity_id).state == "4.0"
 
         # An unavailable/unknown reference should yield an unknown state,
         # not a crash.

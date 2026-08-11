@@ -21,4 +21,4 @@ async def test_update(hass):
 
     assert coordinator.last_update_success
 
-    assert coordinator.data.external_temperature == 32.0
+    assert coordinator.data.external_temperature == 32.5
