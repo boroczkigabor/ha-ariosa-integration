@@ -19,7 +19,13 @@ operational data.
   imbalance between the two
 - An optional **temperature waste sensor**, comparing the internal
   temperature against a reference temperature entity of your choice
-- A **binary sensor** that shows whether the heat exchanger bypass is open
+- A **season sensor** reporting the unit's configured operating mode
+  (Automatic / Winter)
+- Two **status binary sensors** for the preheater and the heat exchanger
+  bypass
+- **Nine alarm binary sensors** for fault conditions, automatically
+  grouped together in a collapsible *Diagnostic* section on the device's
+  card
 - Built-in [diagnostics](https://www.home-assistant.io/integrations/diagnostics/)
   support — download a snapshot of the config entry and latest readings
   for bug reports
@@ -70,7 +76,7 @@ Configuration is done entirely through the UI:
 3. Enter the connection details:
 
    | Field                        | Description                                                                                                    | Default    |
-                     |------------------------------|----------------------------------------------------------------------------------------------------------------|------------|
+      |------------------------------|----------------------------------------------------------------------------------------------------------------|------------|
    | Host                         | IP address or hostname of the ventilation unit                                                                 | —          |
    | Port                         | Modbus TCP port                                                                                                | `502`      |
    | Reference temperature entity | Optional — an existing temperature entity to compare against. See [below](#temperature-waste-sensor-optional). | — (none)   |
@@ -110,6 +116,12 @@ appears or disappears immediately to match.
 | Post treatment       | %    |                                |
 | Machine days         | d    | Total running days             |
 | Filter hours         | h    | Hours since last filter change |
+
+### Season sensor
+
+| Sensor | Possible states   | Notes                                                                                |
+|--------|-------------------|--------------------------------------------------------------------------------------|
+| Season | Automatic, Winter | The unit's configured operating mode, read directly from the device — not calculated |
 
 ### Calculated sensors
 
@@ -158,9 +170,37 @@ Notes on how it behaves:
 
 ### Binary sensors
 
-| Sensor        | Notes                                                                |
-|---------------|----------------------------------------------------------------------|
-| Bypass active | Sensor for the device's  current bypass state. Shown as Open/Closed. |
+| Sensor           | Notes                                               |
+|------------------|-----------------------------------------------------|
+| Preheater status | Whether the electric preheater is currently running |
+| Bypass active    | Whether the heat exchanger bypass is open           |
+
+### Alarm sensors
+
+Nine alarm sensors surface fault conditions reported by the unit itself.
+Exact trigger conditions are determined by the device's own firmware —
+consult your unit's documentation for specifics.
+
+| Sensor                 | Notes                                                        |
+|------------------------|--------------------------------------------------------------|
+| General alarm          | A fault condition not covered by a more specific alarm below |
+| Filter change alarm    | The filter is due for replacement                            |
+| Filter clogged alarm   | The filter is clogged, restricting airflow                   |
+| Frost protection alarm | The unit's frost-protection mechanism has triggered          |
+| Connection alarm       | A communication fault with the unit                          |
+| Motor alarm            | A fault reported by one of the motors                        |
+| Sensor alarm           | One of the unit's internal sensors is reporting a fault      |
+| Motor protection alarm | Motor protection has cut in (e.g. overcurrent/thermal)       |
+| Preheater alarm        | A fault on the electric preheater                            |
+
+All nine share two things by design:
+
+- **Device class `problem`** — shown as *Problem detected* / *OK* with a
+  warning icon when active, instead of a generic on/off toggle.
+- **Entity category `diagnostic`** — Home Assistant automatically groups
+  every diagnostic entity together in its own collapsible section on the
+  device's card, separate from the primary sensors above. This is what
+  keeps all nine alarms visually together without any dashboard setup.
 
 ## Diagnostics
 
