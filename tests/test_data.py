@@ -16,7 +16,7 @@ WINTER_MEASUREMENTS = AriosaMeasurements(
     post_treatment=0,
     machine_days=100,
     filter_hours=50,
-    pre_heater_status=True,
+    preheater_status=True,
     bypass_open=False,
     season_status=1,
 )
@@ -39,7 +39,7 @@ SUMMER_MEASUREMENTS = AriosaMeasurements(
     post_treatment=25,
     machine_days=100,
     filter_hours=50,
-    pre_heater_status=False,
+    preheater_status=False,
     bypass_open=False,
     season_status=0,
 )
@@ -61,7 +61,7 @@ BYPASS_MEASUREMENTS = AriosaMeasurements(
     post_treatment=0,
     machine_days=100,
     filter_hours=50,
-    pre_heater_status=False,
+    preheater_status=False,
     bypass_open=True,
     season_status=0,
 )

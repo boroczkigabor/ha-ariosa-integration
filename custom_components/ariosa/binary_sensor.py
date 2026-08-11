@@ -28,10 +28,10 @@ class AriosaBinarySensorEntityDescription(BinarySensorEntityDescription):
 
 BINARY_SENSOR_DESCRIPTIONS: tuple[BinarySensorEntityDescription, ...] = (
     AriosaBinarySensorEntityDescription(
-        key="pre_heater_status",
-        translation_key="pre_heater_status",
+        key="preheater_status",
+        translation_key="preheater_status",
         device_class=BinarySensorDeviceClass.POWER,
-        value_fn=lambda data: data.pre_heater_status,
+        value_fn=lambda data: data.preheater_status,
     ),
     AriosaBinarySensorEntityDescription(
         key="bypass_active",
@@ -80,9 +80,9 @@ BINARY_SENSOR_DESCRIPTIONS: tuple[BinarySensorEntityDescription, ...] = (
         value_fn=lambda data: data.motor_protection_alarm,
     ),
     AriosaAlarmSensorEntityDescription(
-        key="pre_heater_alarm",
-        translation_key="pre_heater_alarm",
-        value_fn=lambda data: data.pre_heater_alarm,
+        key="preheater_alarm",
+        translation_key="preheater_alarm",
+        value_fn=lambda data: data.preheater_alarm,
     ),
 )
 

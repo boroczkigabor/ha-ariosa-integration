@@ -26,8 +26,8 @@ from .const import (
     REGISTER_MOTOR_ALARM,
     REGISTER_MOTOR_PROTECTION_ALARM,
     REGISTER_POST_TRTMT,
-    REGISTER_PRE_HEATER_ALARM,
-    REGISTER_PRE_HEATER_STATE,
+    REGISTER_PREHEATER_ALARM,
+    REGISTER_PREHEATER_STATE,
     REGISTER_SEASON_STATE,
     REGISTER_SENSOR_ALARM,
     START_REGISTER,
@@ -99,7 +99,7 @@ class AriosaClient:
             post_treatment=registers[REGISTER_POST_TRTMT],
             machine_days=registers[REGISTER_MACHINE_DAYS],
             filter_hours=registers[REGISTER_FILTER_HOURS],
-            pre_heater_status=self._boolean(registers[REGISTER_PRE_HEATER_STATE]),
+            preheater_status=self._boolean(registers[REGISTER_PREHEATER_STATE]),
             bypass_open=self._boolean(registers[REGISTER_BYPASS_OPEN]),
             season_status=registers[REGISTER_SEASON_STATE],
             general_alarm=self._boolean(registers[REGISTER_GENERIC_ALARM]),
@@ -116,7 +116,7 @@ class AriosaClient:
             motor_protection_alarm=self._boolean(
                 registers[REGISTER_MOTOR_PROTECTION_ALARM]
             ),
-            pre_heater_alarm=self._boolean(registers[REGISTER_PRE_HEATER_ALARM]),
+            preheater_alarm=self._boolean(registers[REGISTER_PREHEATER_ALARM]),
         )
 
     @staticmethod

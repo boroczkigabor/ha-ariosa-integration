@@ -29,7 +29,7 @@ class AriosaMeasurements:
 
     # Drive states
 
-    pre_heater_status: bool
+    preheater_status: bool
     bypass_open: bool
     season_status: int
 
@@ -43,4 +43,4 @@ class AriosaMeasurements:
     motor_alarm: bool = False
     sensor_alarm: bool = False
     motor_protection_alarm: bool = False
-    pre_heater_alarm: bool = False
+    preheater_alarm: bool = False

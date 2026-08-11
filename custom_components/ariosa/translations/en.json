@@ -100,8 +100,8 @@
       "bypass_active": {
         "name": "Bypass active"
       },
-      "pre_heater_status": {
-        "name": "Preheater"
+      "preheater_status": {
+        "name": "Preheater status"
       },
       "general_alarm": {
         "name": "General alarm"
@@ -127,8 +127,8 @@
       "motor_protection_alarm": {
         "name": "Motor protection alarm"
       },
-      "pre_heater_alarm": {
-        "name": "Pre heater alarm"
+      "preheater_alarm": {
+        "name": "Preheater alarm"
       }
     }
   }

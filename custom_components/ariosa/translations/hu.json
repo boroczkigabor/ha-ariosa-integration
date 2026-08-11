@@ -100,7 +100,7 @@
       "bypass_active": {
         "name": "Bypass aktív"
       },
-      "pre_heater_status": {
+      "preheater_status": {
         "name": "Előfűtés"
       },
       "general_alarm": {
@@ -127,7 +127,7 @@
       "motor_protection_alarm": {
         "name": "Motor védelmi riasztás"
       },
-      "pre_heater_alarm": {
+      "preheater_alarm": {
         "name": "Előfűtő riasztás"
       }
     }
