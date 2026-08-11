@@ -6,26 +6,12 @@ from homeassistant.const import CONF_HOST, CONF_PORT
 
 from custom_components.ariosa.const import CONF_REFERENCE_TEMPERATURE_ENTITY, DOMAIN
 from custom_components.ariosa.models import AriosaMeasurements
+from tests.test_data import REALISTIC_MEASUREMENTS
 
 
 @pytest.fixture
 def measurements() -> AriosaMeasurements:
-    return AriosaMeasurements(
-        external_temperature=23.5,
-        external_humidity=65.4,
-        ejection_temperature=20.0,
-        ejection_humidity=40.0,
-        internal_temperature=22.0,
-        internal_humidity=45.0,
-        flow_temperature=21.0,
-        flow_humidity=44.0,
-        motor_1_rpm=1200,
-        motor_2_rpm=1190,
-        post_treatment=25,
-        machine_days=365,
-        filter_hours=123,
-        bypass_open=False,
-    )
+    return REALISTIC_MEASUREMENTS
 
 
 async def test_sensors_created_with_correct_state(hass, measurements):

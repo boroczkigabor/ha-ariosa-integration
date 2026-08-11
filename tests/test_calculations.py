@@ -7,66 +7,9 @@ from custom_components.ariosa.calculations import (
     exhaust_side_efficiency,
     supply_side_efficiency,
 )
-from custom_components.ariosa.models import AriosaMeasurements
-
-# A physically realistic winter scenario: cold outdoor air, warm indoor air,
-# and the heat exchanger recovering most of the difference on both sides.
-REALISTIC_MEASUREMENTS = AriosaMeasurements(
-    external_temperature=0.0,
-    external_humidity=80.0,
-    ejection_temperature=3.0,
-    ejection_humidity=90.0,
-    internal_temperature=21.0,
-    internal_humidity=45.0,
-    flow_temperature=18.0,
-    flow_humidity=30.0,
-    motor_1_rpm=1200,
-    motor_2_rpm=1190,
-    post_treatment=0,
-    machine_days=100,
-    filter_hours=50,
-    bypass_open=False,
-)
-
-# A physically realistic summer scenario: hot outdoor air, cooler indoor
-# air (external > internal). The exchanger recovers "coolness" instead of
-# heat, but the same ratio formula should hold — the sign of the gap
-# shouldn't matter, only how much of it gets closed.
-SUMMER_MEASUREMENTS = AriosaMeasurements(
-    external_temperature=32.0,
-    external_humidity=55.0,
-    ejection_temperature=29.0,
-    ejection_humidity=50.0,
-    internal_temperature=24.0,
-    internal_humidity=50.0,
-    flow_temperature=27.0,
-    flow_humidity=55.0,
-    motor_1_rpm=1200,
-    motor_2_rpm=1190,
-    post_treatment=0,
-    machine_days=100,
-    filter_hours=50,
-    bypass_open=False,
-)
-
-# Winter, but with the exchanger core bypassed: supply air stays close to
-# outdoor temperature, exhaust air stays close to room temperature, because
-# neither passed through the core.
-BYPASS_MEASUREMENTS = AriosaMeasurements(
-    external_temperature=5.0,
-    external_humidity=70.0,
-    ejection_temperature=20.5,
-    ejection_humidity=45.0,
-    internal_temperature=21.0,
-    internal_humidity=45.0,
-    flow_temperature=5.5,
-    flow_humidity=70.0,
-    motor_1_rpm=1200,
-    motor_2_rpm=1190,
-    post_treatment=0,
-    machine_days=100,
-    filter_hours=50,
-    bypass_open=True,
+from tests.test_data import (
+    REALISTIC_MEASUREMENTS,
+    SUMMER_MEASUREMENTS,
 )
 
 
