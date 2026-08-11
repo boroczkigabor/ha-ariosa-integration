@@ -65,7 +65,33 @@ def test_signed_conversion(
 async def test_read_inputs() -> None:
     """Test reading input registers."""
 
-    registers = [235, 654, 200, 450, 215, 501, 198, 490, 1200, 1190, 55, 365, 123, 0, 1]
+    registers = [
+        235,  # external temperature
+        654,  # external humidity
+        200,  # ejection temperature
+        450,  # ejection humidity
+        215,  # internal temperature
+        501,  # internal humidity
+        198,  # flow temperature
+        490,  # flow humidity
+        1200,  # motor 1
+        1190,  # motor 2
+        55,  # post treatment
+        365,  # machine days
+        123,  # filter hours
+        0,  # pre-heater status
+        1,  # bypass status
+        0,  # season status
+        0,  # general alarm
+        0,  # filter change alarm
+        0,  # filter clogged alarm
+        0,  # frost protection alarm
+        0,  # connection alarm
+        0,  # motor alarm
+        0,  # sensor alarm
+        0,  # motor protection alarm
+        0,  # pre-heater alarm
+    ]
 
     response = MagicMock()
     response.isError.return_value = False
@@ -90,4 +116,5 @@ async def test_read_inputs() -> None:
         assert data.ejection_temperature == 20.0
         assert data.motor_1_rpm == 1200
         assert data.machine_days == 365
+        assert data.season_status == 0
         assert data.bypass_open == 1
