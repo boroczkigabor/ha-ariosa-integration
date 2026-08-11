@@ -49,6 +49,7 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.external_temperature,
+        icon="mdi:home-thermometer-outline",
     ),
     AriosaSensorEntityDescription(
         key="external_humidity",
@@ -57,6 +58,7 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.external_humidity,
+        icon="mdi:home-percent-outline",
     ),
     AriosaSensorEntityDescription(
         key="ejection_temperature",
@@ -65,6 +67,7 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.ejection_temperature,
+        icon="mdi:home-export-outline",
     ),
     AriosaSensorEntityDescription(
         key="ejection_humidity",
@@ -73,6 +76,7 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.ejection_humidity,
+        icon="mdi:home-export-outline",
     ),
     AriosaSensorEntityDescription(
         key="internal_temperature",
@@ -81,6 +85,7 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.internal_temperature,
+        icon="mdi:home-thermometer",
     ),
     AriosaSensorEntityDescription(
         key="internal_humidity",
@@ -89,6 +94,7 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.internal_humidity,
+        icon="mdi:home-percent-outline",
     ),
     AriosaSensorEntityDescription(
         key="flow_temperature",
@@ -97,6 +103,7 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.flow_temperature,
+        icon="mdi:home-import-outline",
     ),
     AriosaSensorEntityDescription(
         key="flow_humidity",
@@ -105,6 +112,7 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.flow_humidity,
+        icon="mdi:home-import-outline",
     ),
     AriosaSensorEntityDescription(
         key="motor_1_rpm",
