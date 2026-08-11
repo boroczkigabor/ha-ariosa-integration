@@ -94,7 +94,7 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda data: data.internal_humidity,
-        icon="mdi:home-percent-outline",
+        icon="mdi:home-percent",
     ),
     AriosaSensorEntityDescription(
         key="flow_temperature",
