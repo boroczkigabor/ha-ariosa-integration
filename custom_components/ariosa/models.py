@@ -27,4 +27,20 @@ class AriosaMeasurements:
     machine_days: int
     filter_hours: int
 
+    # Drive states
+
+    pre_heater_status: bool
     bypass_open: bool
+    season_status: int
+
+    # Alarm statuses
+
+    general_alarm: bool = False
+    filter_change_alarm: bool = False
+    filter_clogged_alarm: bool = False
+    frost_protection_alarm: bool = False
+    connection_alarm: bool = False
+    motor_alarm: bool = False
+    sensor_alarm: bool = False
+    motor_protection_alarm: bool = False
+    pre_heater_alarm: bool = False

@@ -87,11 +87,48 @@
       },
       "temperature_waste": {
         "name": "Belső hőveszteség"
+      },
+      "season": {
+        "name": "Évszak",
+        "state": {
+          "automatic": "Automatikus",
+          "winter": "Téli"
+        }
       }
     },
     "binary_sensor": {
       "bypass_active": {
         "name": "Bypass aktív"
+      },
+      "pre_heater_status": {
+        "name": "Előfűtés"
+      },
+      "general_alarm": {
+        "name": "Általános riasztás"
+      },
+      "filter_change_alarm": {
+        "name": "Szűrőcsere riasztás"
+      },
+      "filter_clogged_alarm": {
+        "name": "Eltömődött szűrő riasztás"
+      },
+      "frost_protection_alarm": {
+        "name": "Fagyvédelmi riasztás"
+      },
+      "connection_alarm": {
+        "name": "Kapcsolódási riasztás"
+      },
+      "motor_alarm": {
+        "name": "Motor riasztás"
+      },
+      "sensor_alarm": {
+        "name": "Érzékelő riasztás"
+      },
+      "motor_protection_alarm": {
+        "name": "Motor védelmi riasztás"
+      },
+      "pre_heater_alarm": {
+        "name": "Előfűtő riasztás"
       }
     }
   }

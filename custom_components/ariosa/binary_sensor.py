@@ -12,6 +12,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import AriosaConfigEntry
+from .ariosa_alarm_entity import AriosaAlarmSensorEntityDescription
 from .const import DOMAIN
 from .coordinator import AriosaDataUpdateCoordinator
 from .entity import AriosaEntity
@@ -25,12 +26,63 @@ class AriosaBinarySensorEntityDescription(BinarySensorEntityDescription):
     value_fn: Callable[[AriosaMeasurements], bool | None]
 
 
-BINARY_SENSOR_DESCRIPTIONS: tuple[AriosaBinarySensorEntityDescription, ...] = (
+BINARY_SENSOR_DESCRIPTIONS: tuple[BinarySensorEntityDescription, ...] = (
+    AriosaBinarySensorEntityDescription(
+        key="pre_heater_status",
+        translation_key="pre_heater_status",
+        device_class=BinarySensorDeviceClass.HEAT,
+        value_fn=lambda data: data.pre_heater_status,
+    ),
     AriosaBinarySensorEntityDescription(
         key="bypass_active",
         translation_key="bypass_active",
         device_class=BinarySensorDeviceClass.OPENING,
         value_fn=lambda data: data.bypass_open,
+    ),
+    AriosaAlarmSensorEntityDescription(
+        key="general_alarm",
+        translation_key="general_alarm",
+        value_fn=lambda data: data.general_alarm,
+    ),
+    AriosaAlarmSensorEntityDescription(
+        key="filter_change_alarm",
+        translation_key="filter_change_alarm",
+        value_fn=lambda data: data.filter_change_alarm,
+    ),
+    AriosaAlarmSensorEntityDescription(
+        key="filter_clogged_alarm",
+        translation_key="filter_clogged_alarm",
+        value_fn=lambda data: data.filter_clogged_alarm,
+    ),
+    AriosaAlarmSensorEntityDescription(
+        key="frost_protection_alarm",
+        translation_key="frost_protection_alarm",
+        value_fn=lambda data: data.frost_protection_alarm,
+    ),
+    AriosaAlarmSensorEntityDescription(
+        key="connection_alarm",
+        translation_key="connection_alarm",
+        value_fn=lambda data: data.connection_alarm,
+    ),
+    AriosaAlarmSensorEntityDescription(
+        key="motor_alarm",
+        translation_key="motor_alarm",
+        value_fn=lambda data: data.motor_alarm,
+    ),
+    AriosaAlarmSensorEntityDescription(
+        key="sensor_alarm",
+        translation_key="sensor_alarm",
+        value_fn=lambda data: data.sensor_alarm,
+    ),
+    AriosaAlarmSensorEntityDescription(
+        key="motor_protection_alarm",
+        translation_key="motor_protection_alarm",
+        value_fn=lambda data: data.motor_protection_alarm,
+    ),
+    AriosaAlarmSensorEntityDescription(
+        key="pre_heater_alarm",
+        translation_key="pre_heater_alarm",
+        value_fn=lambda data: data.pre_heater_alarm,
     ),
 )
 

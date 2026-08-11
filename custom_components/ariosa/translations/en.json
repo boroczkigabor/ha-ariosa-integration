@@ -87,11 +87,48 @@
       },
       "temperature_waste": {
         "name": "Temperature waste vs. reference"
+      },
+      "season": {
+        "name": "Season",
+        "state": {
+          "automatic": "Automatic",
+          "winter": "Winter"
+        }
       }
     },
     "binary_sensor": {
       "bypass_active": {
         "name": "Bypass active"
+      },
+      "pre_heater_status": {
+        "name": "Preheater"
+      },
+      "general_alarm": {
+        "name": "General alarm"
+      },
+      "filter_change_alarm": {
+        "name": "Filter change alarm"
+      },
+      "filter_clogged_alarm": {
+        "name": "Filter clogged alarm"
+      },
+      "frost_protection_alarm": {
+        "name": "Frost protection alarm"
+      },
+      "connection_alarm": {
+        "name": "Connection alarm"
+      },
+      "motor_alarm": {
+        "name": "Motor alarm"
+      },
+      "sensor_alarm": {
+        "name": "Sensor alarm"
+      },
+      "motor_protection_alarm": {
+        "name": "Motor protection alarm"
+      },
+      "pre_heater_alarm": {
+        "name": "Pre heater alarm"
       }
     }
   }

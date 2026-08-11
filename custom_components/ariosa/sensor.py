@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
+from unittest import case
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -27,7 +28,7 @@ from .calculations import (
     exhaust_side_efficiency,
     supply_side_efficiency,
 )
-from .const import CONF_REFERENCE_TEMPERATURE_ENTITY, DOMAIN
+from .const import CONF_REFERENCE_TEMPERATURE_ENTITY, DOMAIN, SEASON_MODBUS_VALUES
 from .coordinator import AriosaDataUpdateCoordinator
 from .entity import AriosaEntity
 from .models import AriosaMeasurements
@@ -37,7 +38,7 @@ from .models import AriosaMeasurements
 class AriosaSensorEntityDescription(SensorEntityDescription):
     """Describes an Ariosa sensor entity."""
 
-    value_fn: Callable[[AriosaMeasurements], float | int | None]
+    value_fn: Callable[[AriosaMeasurements], float | int | str | None]
 
 
 SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
@@ -141,6 +142,13 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
         native_unit_of_measurement=UnitOfTime.HOURS,
         state_class=SensorStateClass.TOTAL_INCREASING,
         value_fn=lambda data: data.filter_hours,
+    ),
+    AriosaSensorEntityDescription(
+        key="season_state",
+        translation_key="season_state",
+        device_class=SensorDeviceClass.ENUM,
+        options=list(SEASON_MODBUS_VALUES.values()),
+        value_fn=lambda data: SEASON_MODBUS_VALUES.get(data.season_status),
     ),
     AriosaSensorEntityDescription(
         key="supply_side_efficiency",

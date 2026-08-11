@@ -5,20 +5,31 @@ from pymodbus.exceptions import ModbusException
 
 from .const import (
     REGISTER_BYPASS_OPEN,
+    REGISTER_CONNECTION_ALARM,
     REGISTER_COUNT,
     REGISTER_EJECT_HUM,
     REGISTER_EJECT_TEMP,
     REGISTER_EXT_HUM,
     REGISTER_EXT_TEMP,
+    REGISTER_FILTER_CHANGE_ALARM,
+    REGISTER_FILTER_CLOGGED_ALARM,
     REGISTER_FILTER_HOURS,
     REGISTER_FLOW_HUM,
     REGISTER_FLOW_TEMP,
+    REGISTER_FROST_PROTECTION_ALARM,
+    REGISTER_GENERIC_ALARM,
     REGISTER_INT_HUM,
     REGISTER_INT_TEMP,
     REGISTER_MACHINE_DAYS,
     REGISTER_MOTOR_1_RPM,
     REGISTER_MOTOR_2_RPM,
+    REGISTER_MOTOR_ALARM,
+    REGISTER_MOTOR_PROTECTION_ALARM,
     REGISTER_POST_TRTMT,
+    REGISTER_PRE_HEATER_ALARM,
+    REGISTER_PRE_HEATER_STATE,
+    REGISTER_SEASON_STATE,
+    REGISTER_SENSOR_ALARM,
     START_REGISTER,
 )
 from .exceptions import CannotConnect, ReadError
@@ -88,7 +99,24 @@ class AriosaClient:
             post_treatment=registers[REGISTER_POST_TRTMT],
             machine_days=registers[REGISTER_MACHINE_DAYS],
             filter_hours=registers[REGISTER_FILTER_HOURS],
+            pre_heater_status=self._boolean(registers[REGISTER_PRE_HEATER_STATE]),
             bypass_open=self._boolean(registers[REGISTER_BYPASS_OPEN]),
+            season_status=registers[REGISTER_SEASON_STATE],
+            general_alarm=self._boolean(registers[REGISTER_GENERIC_ALARM]),
+            filter_change_alarm=self._boolean(registers[REGISTER_FILTER_CHANGE_ALARM]),
+            filter_clogged_alarm=self._boolean(
+                registers[REGISTER_FILTER_CLOGGED_ALARM]
+            ),
+            frost_protection_alarm=self._boolean(
+                registers[REGISTER_FROST_PROTECTION_ALARM]
+            ),
+            connection_alarm=self._boolean(registers[REGISTER_CONNECTION_ALARM]),
+            motor_alarm=self._boolean(registers[REGISTER_MOTOR_ALARM]),
+            sensor_alarm=self._boolean(registers[REGISTER_SENSOR_ALARM]),
+            motor_protection_alarm=self._boolean(
+                registers[REGISTER_MOTOR_PROTECTION_ALARM]
+            ),
+            pre_heater_alarm=self._boolean(registers[REGISTER_PRE_HEATER_ALARM]),
         )
 
     @staticmethod
