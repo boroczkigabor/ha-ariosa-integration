@@ -1,5 +1,5 @@
 pytest
-pytest-homeassistant-custom-component==0.13.348
+pytest-homeassistant-custom-component==0.13.355
 ruff
 mypy
 pymodbus
