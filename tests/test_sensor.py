@@ -153,8 +153,8 @@ async def test_temperature_waste_sensor_tracks_reference_entity(hass, measuremen
         await hass.async_block_till_done()
 
         assert hass.states.get(entity_id).state == "4.0"
-        # 4.0 / 12.5 = 32 %
-        assert hass.states.get(rel_id).state == "32.0"
+        # 4.0 / 20 = 32 %
+        assert hass.states.get(rel_id).state == "20.0"
 
         # An unavailable/unknown reference should yield an unknown state,
         # not a crash.
