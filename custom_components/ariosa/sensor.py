@@ -24,6 +24,7 @@ from homeassistant.helpers.event import async_track_state_change_event
 from . import AriosaConfigEntry
 from .calculations import (
     efficiency_imbalance,
+    relative_temperature_waste,
     exhaust_side_efficiency,
     supply_side_efficiency,
 )
@@ -213,6 +214,11 @@ async def async_setup_entry(
         entities.append(
             AriosaTemperatureWasteSensor(coordinator, entry, reference_entity_id)
         )
+        entities.append(
+            AriosaRelativeTemperatureWasteSensor(
+                coordinator, entry, reference_entity_id
+            )
+        )
 
     async_add_entities(entities)
 
@@ -290,12 +296,8 @@ class AriosaTemperatureWasteSensor(AriosaEntity, SensorEntity):
     def _handle_reference_state_change(self, _event: object) -> None:
         self.async_write_ha_state()
 
-    @property
-    def native_value(self) -> float | None:
-        """Return |internal temperature - reference temperature|."""
-
-        if self.coordinator.data is None:
-            return None
+    def _reference_temperature(self) -> float | None:
+        """Return the reference entity's numeric state, or None if unusable."""
 
         reference_state = self.hass.states.get(self._reference_entity_id)
 
@@ -306,11 +308,63 @@ class AriosaTemperatureWasteSensor(AriosaEntity, SensorEntity):
             return None
 
         try:
-            reference_temperature = float(reference_state.state)
+            return float(reference_state.state)
         except ValueError:
+            return None
+
+    @property
+    def native_value(self) -> float | None:
+        """Return |internal temperature - reference temperature|."""
+
+        if self.coordinator.data is None:
+            return None
+
+        reference_temperature = self._reference_temperature()
+
+        if reference_temperature is None:
             return None
 
         return round(
             abs(self.coordinator.data.internal_temperature - reference_temperature),
             1,
+        )
+
+
+class AriosaRelativeTemperatureWasteSensor(AriosaTemperatureWasteSensor):
+    """Temperature waste as a percentage of the outdoor-to-reference gap.
+
+    `|internal - reference| / |reference - outdoor| * 100`. E.g. outdoor
+    0 °C, reference 22 °C and 2.2 °C of waste is 10 %. Reports unknown when
+    the outdoor/reference gap is too small for the ratio to be meaningful.
+    """
+
+    _attr_translation_key = "temperature_waste_relative"
+    _attr_device_class = None
+    _attr_native_unit_of_measurement = PERCENTAGE
+    _attr_icon = "mdi:percent-outline"
+
+    def __init__(
+        self,
+        coordinator: AriosaDataUpdateCoordinator,
+        entry: AriosaConfigEntry,
+        reference_entity_id: str,
+    ) -> None:
+        super().__init__(coordinator, entry, reference_entity_id)
+
+        self._attr_unique_id = f"{entry.entry_id}_temperature_waste_relative"
+
+    @property
+    def native_value(self) -> float | None:
+        """Return the waste relative to the outdoor/reference gap, in %."""
+
+        if self.coordinator.data is None:
+            return None
+
+        reference_temperature = self._reference_temperature()
+
+        if reference_temperature is None:
+            return None
+
+        return relative_temperature_waste(
+            self.coordinator.data, reference_temperature
         )

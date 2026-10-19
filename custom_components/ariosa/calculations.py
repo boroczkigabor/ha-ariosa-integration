@@ -85,3 +85,23 @@ def efficiency_imbalance(data: AriosaMeasurements) -> float | None:
 
     return round(supply - exhaust, 1)
 
+
+def relative_temperature_waste(
+    data: AriosaMeasurements, reference_temperature: float
+) -> float | None:
+    """Temperature waste as a percentage of the outdoor-to-reference gap.
+
+    `|internal - reference| / |reference - outdoor| * 100`. With outdoor
+    0 °C, reference 22 °C and 2.2 °C of waste that is 10 %. Returns None
+    when the outdoor/reference gap is below the efficiency spread threshold,
+    since the ratio would be meaningless there.
+    """
+
+    gap = abs(reference_temperature - data.external_temperature)
+
+    if gap < EFFICIENCY_MIN_TEMPERATURE_SPREAD:
+        return None
+
+    waste = abs(data.internal_temperature - reference_temperature)
+
+    return round(waste / gap * 100, 1)

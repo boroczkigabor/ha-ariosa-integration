@@ -76,7 +76,7 @@ Configuration is done entirely through the UI:
 3. Enter the connection details:
 
    | Field                        | Description                                                                                                    | Default    |
-      |------------------------------|----------------------------------------------------------------------------------------------------------------|------------|
+         |------------------------------|----------------------------------------------------------------------------------------------------------------|------------|
    | Host                         | IP address or hostname of the ventilation unit                                                                 | —          |
    | Port                         | Modbus TCP port                                                                                                | `502`      |
    | Reference temperature entity | Optional — an existing temperature entity to compare against. See [below](#temperature-waste-sensor-optional). | — (none)   |
@@ -145,11 +145,12 @@ gap is too small (< 0.5 °C) for the math to be meaningful.
 ### Temperature waste sensor (optional)
 
 If a **reference temperature entity** is configured (see
-[Configuration](#configuration)), an additional sensor is created:
+[Configuration](#configuration)), two additional sensors are created:
 
-| Sensor                          | Unit | Formula                                | Notes                                                                                                                                                 |
-|---------------------------------|------|----------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Temperature waste vs. reference | °C   | `\|Internal temperature − reference\|` | How far the extracted room air deviates from whatever reference you're tracking — e.g. a thermostat's target or setpoint, or a sensor in another room |
+| Sensor                                     | Unit | Formula                                                                            | Notes                                                                                                                                                    |
+|--------------------------------------------|------|------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Temperature waste vs. reference            | °C   | `\|Internal temperature − reference\|`                                             | How far the extracted room air deviates from whatever reference you're tracking — e.g. a thermostat's target or setpoint, or a sensor in another room    |
+| Temperature waste vs. reference (relative) | %    | `\|Internal temperature − reference\| / \|reference − outdoor temperature\| × 100` | The same waste relative to the outdoor-to-reference gap. E.g. outdoor 0 °C, reference 22 °C and 2.2 °C waste → 10 %. *Unknown* when that gap is < 0.5 °C |
 
 Notes on how it behaves:
 

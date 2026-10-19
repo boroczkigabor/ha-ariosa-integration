@@ -88,6 +88,9 @@
       "temperature_waste": {
         "name": "Belső hőveszteség"
       },
+      "temperature_waste_relative": {
+        "name": "Belső hőveszteség (%)"
+      },
       "season": {
         "name": "Évszak",
         "state": {
