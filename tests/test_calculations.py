@@ -69,11 +69,11 @@ def test_relative_temperature_waste_example() -> None:
 
 
 def test_relative_temperature_waste_below_zero_outdoor() -> None:
-    # reference 20 °C, internal 19 °C -> 1 / 20 = 2.0 %
+    # reference 20 °C, internal 19 °C -> 1 / 20 = 5.0 %
     data = replace(
         WINTER_MEASUREMENTS, external_temperature=-10.0, internal_temperature=19.0
     )
-    assert relative_temperature_waste(data, 20.0) == pytest.approx(0.5, abs=0.05)
+    assert relative_temperature_waste(data, 20.0) == pytest.approx(5.0, abs=0.05)
 
 
 def test_relative_temperature_waste_small_gap_is_unknown() -> None:
