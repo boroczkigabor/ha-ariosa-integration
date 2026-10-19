@@ -76,6 +76,6 @@ def test_relative_temperature_waste_below_zero_outdoor() -> None:
     assert relative_temperature_waste(data, 20.0) == pytest.approx(5.0, abs=0.05)
 
 
-def test_relative_temperature_waste_small_gap_is_unknown() -> None:
+def test_relative_temperature_waste_small_gap_is_zero() -> None:
     data = replace(WINTER_MEASUREMENTS, external_temperature=21.8)
-    assert relative_temperature_waste(data, 22.0) is None
+    assert relative_temperature_waste(data, 21.8) == pytest.approx(0.0, abs=0.05)
