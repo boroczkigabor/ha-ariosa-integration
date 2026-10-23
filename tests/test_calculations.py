@@ -61,7 +61,7 @@ def test_efficiencies_are_none_when_temperature_spread_too_small() -> None:
 
 
 def test_relative_temperature_waste_example() -> None:
-    # reference 22 °C, internal 24.2 °C -> 2.2 / 22 = 10 %
+    # outdoor 0 °C, reference 22 °C, internal 24.2 °C -> 2.2 / 22 = 10 %
     data = replace(
         WINTER_MEASUREMENTS, external_temperature=0.0, internal_temperature=24.2
     )
@@ -69,13 +69,13 @@ def test_relative_temperature_waste_example() -> None:
 
 
 def test_relative_temperature_waste_below_zero_outdoor() -> None:
-    # reference 20 °C, internal 19 °C -> 1 / 20 = 5.0 %
+    # outdoor -10 °C, reference 20 °C, internal 19 °C -> 1 / 30 = 3.3 %
     data = replace(
         WINTER_MEASUREMENTS, external_temperature=-10.0, internal_temperature=19.0
     )
-    assert relative_temperature_waste(data, 20.0) == pytest.approx(5.0, abs=0.05)
+    assert relative_temperature_waste(data, 20.0) == pytest.approx(3.3, abs=0.05)
 
 
-def test_relative_temperature_waste_small_gap_is_zero() -> None:
-    data = replace(WINTER_MEASUREMENTS, internal_temperature=21.8)
-    assert relative_temperature_waste(data, 21.8) == pytest.approx(0.0, abs=0.05)
+def test_relative_temperature_waste_small_gap_is_unknown() -> None:
+    data = replace(WINTER_MEASUREMENTS, external_temperature=21.8)
+    assert relative_temperature_waste(data, 22.0) is None

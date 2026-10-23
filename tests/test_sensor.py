@@ -141,11 +141,11 @@ async def test_temperature_waste_sensor_tracks_reference_entity(hass, measuremen
         assert state is not None
         assert state.state == "0.5"
 
-        #   0.5 / 23.5 = 2.1 %
+        # external_temperature=32.5 -> 0.5 / 9.0 = 5.6 %
         rel_id = "sensor.ariosa_ventilation_temperature_waste_vs_reference_relative"
         rel_state = hass.states.get(rel_id)
         assert rel_state is not None
-        assert rel_state.state == "2.1"
+        assert rel_state.state == "5.6"
 
         # Moving the reference should update the waste sensor immediately,
         # without waiting for the next coordinator poll.
@@ -153,8 +153,8 @@ async def test_temperature_waste_sensor_tracks_reference_entity(hass, measuremen
         await hass.async_block_till_done()
 
         assert hass.states.get(entity_id).state == "4.0"
-        # 4.0 / 20 = 32 %
-        assert hass.states.get(rel_id).state == "20.0"
+        # 4.0 / 12.5 = 32 %
+        assert hass.states.get(rel_id).state == "32.0"
 
         # An unavailable/unknown reference should yield an unknown state,
         # not a crash.
