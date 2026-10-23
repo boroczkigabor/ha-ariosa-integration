@@ -44,6 +44,15 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
     }
 )
 
+# Connection settings only; editable via "Reconfigure" (e.g. new IP address).
+RECONFIGURE_SCHEMA = vol.Schema(
+    {
+        vol.Required(CONF_HOST): str,
+        vol.Required(CONF_PORT): int,
+        vol.Required(CONF_SLAVE): int,
+    }
+)
+
 # Reused by the options flow both to render the form (with the current
 # value pre-filled via add_suggested_values_to_schema) and, implicitly, to
 # document what key user_input carries on submit.
@@ -54,6 +63,32 @@ OPTIONS_SCHEMA = vol.Schema(
         ): REFERENCE_TEMPERATURE_ENTITY_SELECTOR,
     }
 )
+
+
+async def _async_test_connection(data: dict[str, Any]) -> str | None:
+    """Try to read from the device; return an error key, or None on success."""
+
+    client = AriosaClient(
+        host=data[CONF_HOST],
+        port=data[CONF_PORT],
+        slave=data[CONF_SLAVE],
+    )
+
+    try:
+        await client.connect()
+        await client.read_inputs()
+
+    except AriosaError:
+        return "cannot_connect"
+
+    except Exception:  # pragma: no cover
+        _LOGGER.exception("Unexpected exception")
+        return "unknown"
+
+    finally:
+        await client.disconnect()
+
+    return None
 
 
 class AriosaConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -83,23 +118,10 @@ class AriosaConfigFlow(ConfigFlow, domain=DOMAIN):
             await self.async_set_unique_id(user_input[CONF_HOST])
             self._abort_if_unique_id_configured()
 
-            client = AriosaClient(
-                host=user_input[CONF_HOST],
-                port=user_input[CONF_PORT],
-                slave=user_input[CONF_SLAVE],
-            )
+            error = await _async_test_connection(user_input)
 
-            try:
-                await client.connect()
-                await client.read_inputs()
-                await client.disconnect()
-
-            except AriosaError:
-                errors["base"] = "cannot_connect"
-
-            except Exception:  # pragma: no cover
-                _LOGGER.exception("Unexpected exception")
-                errors["base"] = "unknown"
+            if error:
+                errors["base"] = error
 
             else:
                 return self.async_create_entry(
@@ -115,6 +137,58 @@ class AriosaConfigFlow(ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="user",
             data_schema=STEP_USER_DATA_SCHEMA,
+            errors=errors,
+        )
+
+    async def async_step_reconfigure(
+        self,
+        user_input: dict[str, Any] | None = None,
+    ) -> ConfigFlowResult:
+        """Change the connection settings (e.g. a new IP address).
+
+        Works even while the entry is failing to set up, which is exactly
+        when the address usually needs fixing.
+        """
+
+        entry = self._get_reconfigure_entry()
+        errors: dict[str, str] = {}
+
+        if user_input is not None:
+            new_host = user_input[CONF_HOST]
+
+            # The host doubles as the entry's unique id, so refuse to move
+            # onto an address another entry already uses.
+            if any(
+                other.entry_id != entry.entry_id and other.unique_id == new_host
+                for other in self._async_current_entries(include_ignore=False)
+            ):
+                return self.async_abort(reason="already_configured")
+
+            error = await _async_test_connection(user_input)
+
+            if error:
+                errors["base"] = error
+
+            else:
+                # The entry's update listener reloads it when something
+                # changed; only reload by hand if nothing did, so a
+                # "reconfigure" with the same values still retries setup.
+                changed = self.hass.config_entries.async_update_entry(
+                    entry,
+                    unique_id=new_host,
+                    data={**entry.data, **user_input},
+                )
+
+                if not changed:
+                    self.hass.config_entries.async_schedule_reload(entry.entry_id)
+
+                return self.async_abort(reason="reconfigure_successful")
+
+        return self.async_show_form(
+            step_id="reconfigure",
+            data_schema=self.add_suggested_values_to_schema(
+                RECONFIGURE_SCHEMA, user_input or entry.data
+            ),
             errors=errors,
         )
 

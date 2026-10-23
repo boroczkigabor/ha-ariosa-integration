@@ -12,6 +12,15 @@
         "data_description": {
           "reference_temperature_entity": "Egy meglévő hőmérséklet entitás, amelyhez a készülék által mért belső hőmérséklet viszonyítva lesz, pl. egy szobatermosztát érzékelője. A hőveszteség számításához szükséges, míg az elszívott levegő a gépbe ér."
         }
+      },
+      "reconfigure": {
+        "title": "Kapcsolat beállításai",
+        "description": "Az Ariosa szellőztető egységhez való csatlakozás módosítása, pl. az IP-cím megváltozása után.",
+        "data": {
+          "host": "Állomásnév/IP",
+          "port": "Port",
+          "slave": "Modbus slave azonosító"
+        }
       }
     },
     "error": {
@@ -19,7 +28,8 @@
       "unknown": "Váratlan hiba történt."
     },
     "abort": {
-      "already_configured": "Az eszköz már konfigurálva van."
+      "already_configured": "Az eszköz már konfigurálva van.",
+      "reconfigure_successful": "A kapcsolat beállításai frissítve."
     }
   },
   "options": {

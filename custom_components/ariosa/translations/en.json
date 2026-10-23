@@ -12,6 +12,15 @@
         "data_description": {
           "reference_temperature_entity": "An existing temperature entity to compare the internal temperature measured by the device against, e.g. a room thermostat sensor. Used for the calculating temperature waste in the air pipes."
         }
+      },
+      "reconfigure": {
+        "title": "Change connection settings",
+        "description": "Update how Home Assistant connects to the Ariosa ventilation unit, e.g. after its IP address changed.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "slave": "Modbus slave ID"
+        }
       }
     },
     "error": {
@@ -19,7 +28,8 @@
       "unknown": "Unexpected error."
     },
     "abort": {
-      "already_configured": "Device is already configured."
+      "already_configured": "Device is already configured.",
+      "reconfigure_successful": "Connection settings updated."
     }
   },
   "options": {

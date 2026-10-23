@@ -1,6 +1,7 @@
+from typing import TYPE_CHECKING
+
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PORT, CONF_SLAVE
-from typing import TYPE_CHECKING
 
 from .const import DOMAIN, PLATFORMS
 from .coordinator import AriosaDataUpdateCoordinator
@@ -36,7 +37,15 @@ async def async_setup_entry(
         client,
     )
 
-    await coord.async_config_entry_first_refresh()
+    try:
+        await coord.async_config_entry_first_refresh()
+    except Exception:
+        # Typically ConfigEntryNotReady while the unit is offline; Home
+        # Assistant retries setup later with a *new* client. Release this
+        # one first, or it keeps its socket and the unit (which usually
+        # accepts a single Modbus TCP connection) refuses the retry.
+        await client.disconnect()
+        raise
 
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.entry_id] = coord

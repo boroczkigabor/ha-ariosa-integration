@@ -118,3 +118,55 @@ async def test_read_inputs() -> None:
         assert data.machine_days == 365
         assert data.season_status == 0
         assert data.bypass_open == 1
+
+
+@pytest.mark.asyncio
+async def test_read_timeout_resets_client_so_next_poll_reconnects() -> None:
+    """A timeout (e.g. device powered off, half-open socket) must raise
+    ReadError and replace the client, so the next poll starts from a fresh
+    connection instead of reusing the dead one.
+    """
+
+    from custom_components.ariosa.exceptions import ReadError
+
+    with patch(
+        "custom_components.ariosa.modbus_client.AsyncModbusTcpClient"
+    ) as client_cls:
+        dead = MagicMock()
+        dead.connected = True
+        dead.read_input_registers = AsyncMock(side_effect=TimeoutError)
+
+        fresh = MagicMock()
+
+        client_cls.side_effect = [dead, fresh]
+
+        ariosa = AriosaClient("127.0.0.1", 502, 1)
+
+        with pytest.raises(ReadError):
+            await ariosa.read_inputs()
+
+        dead.close.assert_called_once()
+        assert client_cls.call_count == 2
+        assert ariosa._client is fresh
+
+
+@pytest.mark.asyncio
+async def test_connect_failure_raises_cannot_connect_and_resets() -> None:
+    from custom_components.ariosa.exceptions import CannotConnect
+
+    with patch(
+        "custom_components.ariosa.modbus_client.AsyncModbusTcpClient"
+    ) as client_cls:
+        first = MagicMock()
+        first.connected = False
+        first.connect = AsyncMock(side_effect=OSError("unreachable"))
+
+        client_cls.side_effect = [first, MagicMock()]
+
+        ariosa = AriosaClient("127.0.0.1", 502, 1)
+
+        with pytest.raises(CannotConnect):
+            await ariosa.connect()
+
+        first.close.assert_called_once()
+        assert client_cls.call_count == 2

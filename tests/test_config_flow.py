@@ -98,3 +98,92 @@ async def test_options_flow_sets_reference_entity(hass):
             hass.states.get("sensor.ariosa_ventilation_temperature_waste_vs_reference")
             is not None
         )
+
+
+async def _setup_entry(hass, host: str = "192.168.1.10"):
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={"source": config_entries.SOURCE_USER},
+    )
+    await hass.config_entries.flow.async_configure(
+        result["flow_id"],
+        {CONF_HOST: host, CONF_PORT: 502},
+    )
+    await hass.async_block_till_done()
+
+    return hass.config_entries.async_entries(DOMAIN)[-1]
+
+
+async def test_reconfigure_changes_host(hass):
+    """The device's IP address can be changed after setup."""
+
+    with (
+        patch("custom_components.ariosa.config_flow.AriosaClient") as client_cls,
+        patch("custom_components.ariosa.AriosaClient", new=client_cls),
+    ):
+        client = client_cls.return_value
+
+        client.connect = AsyncMock()
+        client.disconnect = AsyncMock()
+        client.read_inputs = AsyncMock()
+
+        entry = await _setup_entry(hass)
+
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN,
+            context={
+                "source": config_entries.SOURCE_RECONFIGURE,
+                "entry_id": entry.entry_id,
+            },
+        )
+
+        assert result["type"] == "form"
+        assert result["step_id"] == "reconfigure"
+
+        result2 = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {CONF_HOST: "192.168.1.99", CONF_PORT: 502, "slave": 1},
+        )
+
+        assert result2["type"] == "abort"
+        assert result2["reason"] == "reconfigure_successful"
+
+        await hass.async_block_till_done()
+
+        assert entry.data[CONF_HOST] == "192.168.1.99"
+        assert entry.unique_id == "192.168.1.99"
+
+
+async def test_reconfigure_cannot_connect_keeps_old_host(hass):
+    from custom_components.ariosa.exceptions import CannotConnect
+
+    with (
+        patch("custom_components.ariosa.config_flow.AriosaClient") as client_cls,
+        patch("custom_components.ariosa.AriosaClient", new=client_cls),
+    ):
+        client = client_cls.return_value
+
+        client.connect = AsyncMock()
+        client.disconnect = AsyncMock()
+        client.read_inputs = AsyncMock()
+
+        entry = await _setup_entry(hass)
+
+        client.connect = AsyncMock(side_effect=CannotConnect)
+
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN,
+            context={
+                "source": config_entries.SOURCE_RECONFIGURE,
+                "entry_id": entry.entry_id,
+            },
+        )
+
+        result2 = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {CONF_HOST: "192.168.1.99", CONF_PORT: 502, "slave": 1},
+        )
+
+        assert result2["type"] == "form"
+        assert result2["errors"] == {"base": "cannot_connect"}
+        assert entry.data[CONF_HOST] == "192.168.1.10"

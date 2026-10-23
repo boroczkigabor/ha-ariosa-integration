@@ -35,19 +35,54 @@ from .const import (
 from .exceptions import CannotConnect, ReadError
 from .models import AriosaMeasurements
 
+# Network-level failures that must surface as our own AriosaError types
+# instead of escaping to Home Assistant as unhandled exceptions.
+_TRANSPORT_ERRORS = (ModbusException, OSError, TimeoutError)
+
+CONNECT_TIMEOUT = 5
+
 
 class AriosaClient:
-    """Ariosa Modbus TCP client."""
+    """Ariosa Modbus TCP client.
+
+    The underlying pymodbus client is deliberately *not* allowed to
+    reconnect on its own (`reconnect_delay=0`): the coordinator polls every
+    few seconds anyway, so reconnecting is done here, on demand, from a
+    freshly created client. A background auto-reconnect task plus our own
+    reconnects could end up with two sockets to a device that typically
+    accepts only one Modbus TCP connection at a time, locking us out.
+    """
 
     def __init__(self, host: str, port: int, slave: int) -> None:
         self._host = host
         self._port = port
         self._slave = slave
 
-        self._client = AsyncModbusTcpClient(
-            host=host,
-            port=port,
+        self._client = self._create_client()
+
+    def _create_client(self) -> AsyncModbusTcpClient:
+        return AsyncModbusTcpClient(
+            host=self._host,
+            port=self._port,
+            timeout=CONNECT_TIMEOUT,
+            reconnect_delay=0,
         )
+
+    async def _reset(self) -> None:
+        """Drop the current connection (possibly half-open) and start clean.
+
+        After the device is powered off, a TCP connection can stay "open"
+        from our side for a long time, so `connected` stays True while every
+        request times out. Replacing the client guarantees the next poll
+        opens a brand-new socket once the device is back.
+        """
+
+        try:
+            self._client.close()
+        except Exception:  # noqa: BLE001 - best effort, we are discarding it
+            pass
+
+        self._client = self._create_client()
 
     @property
     def connected(self) -> bool:
@@ -57,9 +92,14 @@ class AriosaClient:
     async def connect(self) -> None:
         """Connect to the device."""
 
-        connected = await self._client.connect()
+        try:
+            connected = await self._client.connect()
+        except _TRANSPORT_ERRORS as err:
+            await self._reset()
+            raise CannotConnect from err
 
         if not connected:
+            await self._reset()
             raise CannotConnect
 
     async def disconnect(self) -> None:
@@ -77,10 +117,12 @@ class AriosaClient:
             response = await self._client.read_input_registers(
                 address=START_REGISTER, count=REGISTER_COUNT, device_id=self._slave
             )
-        except ModbusException as err:
+        except _TRANSPORT_ERRORS as err:
+            await self._reset()
             raise ReadError from err
 
-        if response.isError():
+        if response.isError() or len(response.registers) < REGISTER_COUNT:
+            await self._reset()
             raise ReadError
 
         registers = response.registers

@@ -89,6 +89,17 @@ Configuration is done entirely through the UI:
 Multiple ventilation units can be added by repeating the process with a
 different host.
 
+### Changing the device address
+
+If the unit gets a new IP address (or its port/slave ID changes), update it
+without removing the integration:
+
+**Settings → Devices & Services → Ariosa Ventilation → ⋮ → Reconfigure**
+
+The new settings are tested against the device before they are saved, and
+the entry reloads automatically. This also works while the entry is
+showing a setup error.
+
 ### Changing settings later
 
 The reference temperature entity can be set, changed, or cleared at any
@@ -202,6 +213,14 @@ All nine share two things by design:
   every diagnostic entity together in its own collapsible section on the
   device's card, separate from the primary sensors above. This is what
   keeps all nine alarms visually together without any dashboard setup.
+
+## Recovering after the unit was offline
+
+If the unit is powered off or unreachable, the entities become unavailable
+and the integration keeps retrying on its own — once the unit is back, no
+manual reload is needed. Each failed poll drops the connection and the next
+one opens a fresh socket, so a half-open connection left over from the
+outage cannot keep the integration stuck.
 
 ## Diagnostics
 
