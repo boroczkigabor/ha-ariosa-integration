@@ -60,3 +60,13 @@ SEASON_MODBUS_VALUES: dict[int, str] = {
     0: SEASON_AUTOMATIC,
     1: SEASON_WINTER,
 }
+
+
+# Heat loss in the extract ducts, estimated from fan speed. The airflow
+# figures are a rough, linear-in-rpm estimate: ~200 m3/h at ~2800 rpm
+# (fan level 2, 60 % of the unit's ~330 m3/h maximum). Replace with the
+# manufacturer's rpm-to-airflow curve for better accuracy.
+AIRFLOW_M3H_PER_RPM = 200 / 2800
+
+# Volumetric heat capacity of air expressed in W per (m3/h * K).
+AIR_HEAT_W_PER_M3H_K = 0.34

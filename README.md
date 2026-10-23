@@ -156,12 +156,13 @@ gap is too small (< 0.5 °C) for the math to be meaningful.
 ### Temperature waste sensor (optional)
 
 If a **reference temperature entity** is configured (see
-[Configuration](#configuration)), two additional sensors are created:
+[Configuration](#configuration)), three additional sensors are created:
 
-| Sensor                                     | Unit | Formula                                                                            | Notes                                                                                                                                                    |
-|--------------------------------------------|------|------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Temperature waste vs. reference            | °C   | `\|Internal temperature − reference\|`                                             | How far the extracted room air deviates from whatever reference you're tracking — e.g. a thermostat's target or setpoint, or a sensor in another room    |
-| Temperature waste vs. reference (relative) | %    | `\|Internal temperature − reference\| / \|reference − outdoor temperature\| × 100` | The same waste relative to the outdoor-to-reference gap. E.g. outdoor 0 °C, reference 22 °C and 2.2 °C waste → 10 %. *Unknown* when that gap is < 0.5 °C |
+| Sensor                                     | Unit | Formula                                                                            | Notes                                                                                                                                                                                               |
+|--------------------------------------------|------|------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Temperature waste vs. reference            | °C   | `\|Internal temperature − reference\|`                                             | How far the extracted room air deviates from whatever reference you're tracking — e.g. a thermostat's target or setpoint, or a sensor in another room                                               |
+| Temperature waste vs. reference (relative) | %    | `\|Internal temperature − reference\| / \|reference − outdoor temperature\| × 100` | The same waste relative to the outdoor-to-reference gap. E.g. outdoor 0 °C, reference 22 °C and 2.2 °C waste → 10 %. *Unknown* when that gap is < 0.5 °C                                            |
+| Estimated heat loss in ducts               | W    | `0.34 × airflow [m³/h] × \|internal − reference\|`                                 | Airflow is *estimated* from the mean motor rpm, assuming it is proportional to fan speed (~200 m³/h at ~2800 rpm). A rough figure; it stays roughly constant across fan levels, unlike the % sensor |
 
 Notes on how it behaves:
 

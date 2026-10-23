@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 
+from .const import AIR_HEAT_W_PER_M3H_K, AIRFLOW_M3H_PER_RPM
 from .models import AriosaMeasurements
 
 # Below this outdoor/room temperature gap (°C), the efficiency formulas
@@ -105,3 +106,27 @@ def relative_temperature_waste(
     waste = abs(data.internal_temperature - reference_temperature)
 
     return round(waste / gap * 100, 1)
+
+
+def estimated_airflow(data: AriosaMeasurements) -> float:
+    """Estimated airflow in m3/h from the mean of the two motors' rpm.
+
+    Assumes airflow is proportional to fan speed - a rough approximation.
+    """
+
+    mean_rpm = (data.motor_1_rpm + data.motor_2_rpm) / 2
+
+    return mean_rpm * AIRFLOW_M3H_PER_RPM
+
+
+def heat_loss_power(data: AriosaMeasurements, reference_temperature: float) -> int:
+    """Heat lost in the extract ducts, in watts.
+
+    `0.34 * airflow [m3/h] * |reference - internal| [K]`, where the
+    reference is the room temperature and `internal` is the temperature of
+    the extracted air by the time it reaches the unit.
+    """
+
+    delta = abs(reference_temperature - data.internal_temperature)
+
+    return round(AIR_HEAT_W_PER_M3H_K * estimated_airflow(data) * delta)

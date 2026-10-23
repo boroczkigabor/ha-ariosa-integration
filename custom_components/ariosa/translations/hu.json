@@ -17,7 +17,7 @@
         "title": "Kapcsolat beállításai",
         "description": "Az Ariosa szellőztető egységhez való csatlakozás módosítása, pl. az IP-cím megváltozása után.",
         "data": {
-          "host": "Állomásnév/IP",
+          "host": "Állomásnév",
           "port": "Port",
           "slave": "Modbus slave azonosító"
         }
@@ -99,7 +99,10 @@
         "name": "Belső hőveszteség"
       },
       "temperature_waste_relative": {
-        "name": "Belső hőveszteség (%)"
+        "name": "Relatív belső hőveszteség"
+      },
+      "heat_loss_power": {
+        "name": "Becsült csővezetéki hőveszteség"
       },
       "season": {
         "name": "Évszak",

@@ -14,6 +14,7 @@ from homeassistant.const import (
     REVOLUTIONS_PER_MINUTE,
     STATE_UNAVAILABLE,
     STATE_UNKNOWN,
+    UnitOfPower,
     UnitOfTemperature,
     UnitOfTime,
 )
@@ -24,8 +25,9 @@ from homeassistant.helpers.event import async_track_state_change_event
 from . import AriosaConfigEntry
 from .calculations import (
     efficiency_imbalance,
-    relative_temperature_waste,
     exhaust_side_efficiency,
+    heat_loss_power,
+    relative_temperature_waste,
     supply_side_efficiency,
 )
 from .const import CONF_REFERENCE_TEMPERATURE_ENTITY, DOMAIN, SEASON_MODBUS_VALUES
@@ -219,6 +221,9 @@ async def async_setup_entry(
                 coordinator, entry, reference_entity_id
             )
         )
+        entities.append(
+            AriosaHeatLossPowerSensor(coordinator, entry, reference_entity_id)
+        )
 
     async_add_entities(entities)
 
@@ -365,6 +370,43 @@ class AriosaRelativeTemperatureWasteSensor(AriosaTemperatureWasteSensor):
         if reference_temperature is None:
             return None
 
-        return relative_temperature_waste(
-            self.coordinator.data, reference_temperature
-        )
+        return relative_temperature_waste(self.coordinator.data, reference_temperature)
+
+
+class AriosaHeatLossPowerSensor(AriosaTemperatureWasteSensor):
+    """Estimated heat loss in the extract ducts, in watts.
+
+    Combines the temperature waste with an airflow estimated from fan
+    speed (see `calculations.estimated_airflow`), so unlike the percentage
+    it doesn't swing with the fan level: the same duct loses roughly the
+    same watts per kelvin whether the fans are slow or fast.
+    """
+
+    _attr_translation_key = "heat_loss_power"
+    _attr_device_class = SensorDeviceClass.POWER
+    _attr_native_unit_of_measurement = UnitOfPower.WATT
+    _attr_icon = "mdi:home-thermometer"
+
+    def __init__(
+        self,
+        coordinator: AriosaDataUpdateCoordinator,
+        entry: AriosaConfigEntry,
+        reference_entity_id: str,
+    ) -> None:
+        super().__init__(coordinator, entry, reference_entity_id)
+
+        self._attr_unique_id = f"{entry.entry_id}_heat_loss_power"
+
+    @property
+    def native_value(self) -> int | None:
+        """Return the estimated heat loss in W."""
+
+        if self.coordinator.data is None:
+            return None
+
+        reference_temperature = self._reference_temperature()
+
+        if reference_temperature is None:
+            return None
+
+        return heat_loss_power(self.coordinator.data, reference_temperature)

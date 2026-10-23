@@ -5,6 +5,7 @@ import pytest
 from custom_components.ariosa.calculations import (
     efficiency_imbalance,
     exhaust_side_efficiency,
+    heat_loss_power,
     relative_temperature_waste,
     supply_side_efficiency,
 )
@@ -79,3 +80,24 @@ def test_relative_temperature_waste_below_zero_outdoor() -> None:
 def test_relative_temperature_waste_small_gap_is_unknown() -> None:
     data = replace(WINTER_MEASUREMENTS, external_temperature=21.8)
     assert relative_temperature_waste(data, 22.0) is None
+
+
+def test_heat_loss_power() -> None:
+    # 2800 rpm on both motors -> 200 m3/h; 0.34 * 200 * 2 K = 136 W
+    data = replace(
+        WINTER_MEASUREMENTS,
+        motor_1_rpm=2800,
+        motor_2_rpm=2800,
+        internal_temperature=20.0,
+    )
+    assert heat_loss_power(data, 22.0) == 136
+
+
+def test_heat_loss_power_scales_with_airflow() -> None:
+    slow = replace(
+        WINTER_MEASUREMENTS,
+        motor_1_rpm=1400,
+        motor_2_rpm=1400,
+        internal_temperature=20.0,
+    )
+    assert heat_loss_power(slow, 22.0) == 68

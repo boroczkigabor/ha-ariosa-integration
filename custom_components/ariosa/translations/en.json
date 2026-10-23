@@ -101,6 +101,9 @@
       "temperature_waste_relative": {
         "name": "Temperature waste vs. reference (relative)"
       },
+      "heat_loss_power": {
+        "name": "Estimated heat loss in ducts"
+      },
       "season": {
         "name": "Season",
         "state": {
