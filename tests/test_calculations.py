@@ -87,7 +87,7 @@ def test_heat_loss_power() -> None:
     data = replace(
         WINTER_MEASUREMENTS,
         motor_1_rpm=2800,
-        motor_2_rpm=2800,
+        motor_2_rpm=1000,  # intake motor must not matter
         internal_temperature=20.0,
     )
     assert heat_loss_power(data, 22.0) == 136
@@ -97,7 +97,7 @@ def test_heat_loss_power_scales_with_airflow() -> None:
     slow = replace(
         WINTER_MEASUREMENTS,
         motor_1_rpm=1400,
-        motor_2_rpm=1400,
+        motor_2_rpm=3000,
         internal_temperature=20.0,
     )
     assert heat_loss_power(slow, 22.0) == 68

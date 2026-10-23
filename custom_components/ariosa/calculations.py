@@ -109,14 +109,14 @@ def relative_temperature_waste(
 
 
 def estimated_airflow(data: AriosaMeasurements) -> float:
-    """Estimated airflow in m3/h from the mean of the two motors' rpm.
+    """Estimated extract airflow in m3/h from the exhaust motor's rpm.
 
-    Assumes airflow is proportional to fan speed - a rough approximation.
+    Motor A (the exhaust/extract fan) is the unit's first motor register,
+    exposed as `motor_1_rpm`. Assumes airflow is proportional to fan speed -
+    a rough approximation.
     """
 
-    mean_rpm = (data.motor_1_rpm + data.motor_2_rpm) / 2
-
-    return mean_rpm * AIRFLOW_M3H_PER_RPM
+    return data.motor_1_rpm * AIRFLOW_M3H_PER_RPM
 
 
 def heat_loss_power(data: AriosaMeasurements, reference_temperature: float) -> int:
