@@ -76,7 +76,7 @@ Configuration is done entirely through the UI:
 3. Enter the connection details:
 
    | Field                        | Description                                                                                                    | Default    |
-         |------------------------------|----------------------------------------------------------------------------------------------------------------|------------|
+      |------------------------------|----------------------------------------------------------------------------------------------------------------|------------|
    | Host                         | IP address or hostname of the ventilation unit                                                                 | —          |
    | Port                         | Modbus TCP port                                                                                                | `502`      |
    | Reference temperature entity | Optional — an existing temperature entity to compare against. See [below](#temperature-waste-sensor-optional). | — (none)   |
@@ -112,21 +112,22 @@ appears or disappears immediately to match.
 
 ## Entities
 
-| Sensor               | Unit | Notes                          |
-|----------------------|------|--------------------------------|
-| External temperature | °C   | Outdoor air                    |
-| External humidity    | %    | Outdoor air                    |
-| Ejection temperature | °C   | Air expelled outside           |
-| Ejection humidity    | %    | Air expelled outside           |
-| Internal temperature | °C   | Room air extracted             |
-| Internal humidity    | %    | Room air extracted             |
-| Flow temperature     | °C   | Supply air into the room       |
-| Flow humidity        | %    | Supply air into the room       |
-| Motor 1 speed        | rpm  |                                |
-| Motor 2 speed        | rpm  |                                |
-| Post treatment       | %    |                                |
-| Machine days         | d    | Total running days             |
-| Filter hours         | h    | Hours since last filter change |
+| Sensor               | Unit | Notes                                                                                                                                        |
+|----------------------|------|----------------------------------------------------------------------------------------------------------------------------------------------|
+| External temperature | °C   | Outdoor air                                                                                                                                  |
+| External humidity    | %    | Outdoor air                                                                                                                                  |
+| Ejection temperature | °C   | Air expelled outside                                                                                                                         |
+| Ejection humidity    | %    | Air expelled outside                                                                                                                         |
+| Internal temperature | °C   | Room air extracted                                                                                                                           |
+| Internal humidity    | %    | Room air extracted                                                                                                                           |
+| Flow temperature     | °C   | Supply air into the room                                                                                                                     |
+| Flow humidity        | %    | Supply air into the room                                                                                                                     |
+| Motor 1 speed        | rpm  |                                                                                                                                              |
+| Motor 2 speed        | rpm  |                                                                                                                                              |
+| Post treatment       | %    |                                                                                                                                              |
+| Machine days         | d    | Total running days                                                                                                                           |
+| Filter hours         | h    | Hours since last filter change                                                                                                               |
+| Estimated airflow    | m³/h | Estimated from Motor 1 (exhaust) rpm via a calibration curve for the HV 330 E (`AIRFLOW_CURVE` in `const.py`) — a rough figure, not measured |
 
 ### Season sensor
 

@@ -95,6 +95,9 @@
       "efficiency_imbalance": {
         "name": "Heat recovery efficiency imbalance"
       },
+      "estimated_airflow": {
+        "name": "Estimated airflow"
+      },
       "temperature_waste": {
         "name": "Temperature waste vs. reference"
       },

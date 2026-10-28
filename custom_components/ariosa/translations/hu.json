@@ -95,6 +95,9 @@
       "efficiency_imbalance": {
         "name": "Hővisszanyerési hatásfok eltérése"
       },
+      "estimated_airflow": {
+        "name": "Becsült légmennyiség"
+      },
       "temperature_waste": {
         "name": "Belső hőveszteség"
       },

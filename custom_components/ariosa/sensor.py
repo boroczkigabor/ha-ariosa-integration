@@ -17,6 +17,7 @@ from homeassistant.const import (
     UnitOfPower,
     UnitOfTemperature,
     UnitOfTime,
+    UnitOfVolumeFlowRate,
 )
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -25,6 +26,7 @@ from homeassistant.helpers.event import async_track_state_change_event
 from . import AriosaConfigEntry
 from .calculations import (
     efficiency_imbalance,
+    estimated_airflow,
     exhaust_side_efficiency,
     heat_loss_power,
     relative_temperature_waste,
@@ -187,6 +189,15 @@ SENSOR_DESCRIPTIONS: tuple[AriosaSensorEntityDescription, ...] = (
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=efficiency_imbalance,
         icon="mdi:scale-unbalanced",
+    ),
+    AriosaSensorEntityDescription(
+        key="estimated_airflow",
+        translation_key="estimated_airflow",
+        device_class=SensorDeviceClass.VOLUME_FLOW_RATE,
+        native_unit_of_measurement=UnitOfVolumeFlowRate.CUBIC_METERS_PER_HOUR,
+        state_class=SensorStateClass.MEASUREMENT,
+        value_fn=lambda data: round(estimated_airflow(data), 1),
+        icon="mdi:fan",
     ),
 )
 
