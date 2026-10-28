@@ -62,11 +62,27 @@ SEASON_MODBUS_VALUES: dict[int, str] = {
 }
 
 
-# Heat loss in the extract ducts, estimated from fan speed. The airflow
-# figures are a rough, linear-in-rpm estimate: ~200 m3/h at ~2800 rpm
-# (fan level 2, 60 % of the unit's ~330 m3/h maximum). Replace with the
-# manufacturer's rpm-to-airflow curve for better accuracy.
-AIRFLOW_M3H_PER_RPM = 200 / 2800
+# Heat loss in the extract ducts, estimated from fan speed.
+#
+# The unit regulates airflow (not rpm), so rpm only maps to airflow
+# approximately. Calibration points for the Ariosa HV 330 E, as
+# (exhaust motor rpm, airflow m3/h):
+#   - 3000 rpm at 100 %: the datasheet's maximum airflow, 330 m3/h
+#   - 2700 rpm at 60 %, 2520 rpm at 55 %, 1200 rpm at 17 %: rpm measured on
+#     the unit, with the airflow taken as that percentage of the 330 m3/h
+#     maximum (the datasheet likewise defines its reference flow as 70 % of
+#     the maximum)
+# Between points the airflow is interpolated linearly; below the first it
+# falls linearly to 0 at 0 rpm, above the last it stays at the maximum.
+# Adjust these if you measure better values.
+AIRFLOW_MAX_M3H = 330.0
+AIRFLOW_CURVE: tuple[tuple[float, float], ...] = (
+    (0, 0.0),
+    (1200, 0.17 * AIRFLOW_MAX_M3H),
+    (2520, 0.55 * AIRFLOW_MAX_M3H),
+    (2700, 0.60 * AIRFLOW_MAX_M3H),
+    (3000, AIRFLOW_MAX_M3H),
+)
 
 # Volumetric heat capacity of air expressed in W per (m3/h * K).
 AIR_HEAT_W_PER_M3H_K = 0.34

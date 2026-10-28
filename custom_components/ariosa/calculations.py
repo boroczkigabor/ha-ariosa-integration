@@ -1,9 +1,13 @@
 from __future__ import annotations
 
+import itertools
 from functools import lru_cache
+from typing import TYPE_CHECKING
 
-from .const import AIR_HEAT_W_PER_M3H_K, AIRFLOW_M3H_PER_RPM
-from .models import AriosaMeasurements
+from .const import AIR_HEAT_W_PER_M3H_K, AIRFLOW_CURVE
+
+if TYPE_CHECKING:
+    from .models import AriosaMeasurements
 
 # Below this outdoor/room temperature gap (°C), the efficiency formulas
 # become numerically unstable (dividing by a near-zero denominator), so we
@@ -112,11 +116,19 @@ def estimated_airflow(data: AriosaMeasurements) -> float:
     """Estimated extract airflow in m3/h from the exhaust motor's rpm.
 
     Motor A (the exhaust/extract fan) is the unit's first motor register,
-    exposed as `motor_1_rpm`. Assumes airflow is proportional to fan speed -
-    a rough approximation.
+    exposed as `motor_1_rpm`. The rpm is mapped through the calibration
+    points in `AIRFLOW_CURVE` with linear interpolation, and capped at the
+    unit's maximum airflow.
     """
 
-    return data.motor_1_rpm * AIRFLOW_M3H_PER_RPM
+    rpm = data.motor_1_rpm
+
+    for (rpm_low, flow_low), (rpm_high, flow_high) in itertools.pairwise(AIRFLOW_CURVE):
+        if rpm <= rpm_high:
+            fraction = (rpm - rpm_low) / (rpm_high - rpm_low)
+            return flow_low + fraction * (flow_high - flow_low)
+
+    return AIRFLOW_CURVE[-1][1]
 
 
 def heat_loss_power(data: AriosaMeasurements, reference_temperature: float) -> int:

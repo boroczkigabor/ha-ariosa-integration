@@ -4,6 +4,7 @@ import pytest
 
 from custom_components.ariosa.calculations import (
     efficiency_imbalance,
+    estimated_airflow,
     exhaust_side_efficiency,
     heat_loss_power,
     relative_temperature_waste,
@@ -82,22 +83,36 @@ def test_relative_temperature_waste_small_gap_is_unknown() -> None:
     assert relative_temperature_waste(data, 22.0) is None
 
 
+def test_estimated_airflow_follows_calibration_points() -> None:
+    def flow(rpm: int) -> float:
+        return estimated_airflow(replace(WINTER_MEASUREMENTS, motor_1_rpm=rpm))
+
+    assert flow(0) == 0
+    assert flow(1200) == pytest.approx(56.1)  # 17 % of 330
+    assert flow(2520) == pytest.approx(181.5)  # 55 % of 330
+    assert flow(2700) == pytest.approx(198.0)  # 60 % of 330
+    assert flow(3000) == pytest.approx(330.0)  # datasheet maximum
+    assert flow(1860) == pytest.approx(118.8)  # halfway 1200..2520
+    assert flow(3200) == pytest.approx(330.0)  # capped
+
+
 def test_heat_loss_power() -> None:
-    # 2800 rpm on both motors -> 200 m3/h; 0.34 * 200 * 2 K = 136 W
+    # 2700 rpm -> 198 m3/h; 0.34 * 198 * 2 K = 134.6 W
     data = replace(
         WINTER_MEASUREMENTS,
-        motor_1_rpm=2800,
+        motor_1_rpm=2700,
         motor_2_rpm=1000,  # intake motor must not matter
         internal_temperature=20.0,
     )
-    assert heat_loss_power(data, 22.0) == 136
+    assert heat_loss_power(data, 22.0) == 135
 
 
-def test_heat_loss_power_scales_with_airflow() -> None:
-    slow = replace(
+def test_heat_loss_power_night() -> None:
+    # 1200 rpm -> 56.1 m3/h; 0.34 * 56.1 * 4.8 K = 91.6 W
+    data = replace(
         WINTER_MEASUREMENTS,
-        motor_1_rpm=1400,
+        motor_1_rpm=1200,
         motor_2_rpm=3000,
-        internal_temperature=20.0,
+        internal_temperature=17.2,
     )
-    assert heat_loss_power(slow, 22.0) == 68
+    assert heat_loss_power(data, 22.0) == 92
