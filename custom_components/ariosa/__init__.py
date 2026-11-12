@@ -67,7 +67,7 @@ async def _async_update_listener(
     Options (the reference temperature entity and the fan control switch)
     are edited via the "Configure" options flow after setup. Reloading
     picks up the change immediately - adding or removing the temperature
-    waste sensors and the fan mode control as needed - without requiring
+    waste sensors and the fan entity as needed - without requiring
     a Home Assistant restart.
     """
 

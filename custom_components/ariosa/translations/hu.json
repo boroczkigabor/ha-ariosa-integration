@@ -154,15 +154,18 @@
         "name": "Előfűtő riasztás"
       }
     },
-    "select": {
+    "fan": {
       "fan_mode": {
         "name": "Ventilátor üzemmód",
-        "state": {
-          "off": "Ki",
-          "night": "Éjszakai",
-          "level_1": "1. fokozat",
-          "level_2": "2. fokozat",
-          "level_3": "3. fokozat"
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "night": "Éjszakai",
+              "level_1": "1. fokozat",
+              "level_2": "2. fokozat",
+              "level_3": "3. fokozat"
+            }
+          }
         }
       }
     }

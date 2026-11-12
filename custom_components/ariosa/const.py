@@ -52,7 +52,7 @@ REGISTER_SENSOR_ALARM = 22
 REGISTER_MOTOR_PROTECTION_ALARM = 23
 REGISTER_PREHEATER_ALARM = 24
 
-PLATFORMS: list[str] = ["sensor", "binary_sensor", "select"]
+PLATFORMS: list[str] = ["sensor", "binary_sensor", "fan"]
 
 
 # The single writable register: the fan mode. Its address is used as-is on
@@ -60,8 +60,7 @@ PLATFORMS: list[str] = ["sensor", "binary_sensor", "select"]
 # enabled in the unit's advanced menu.
 REGISTER_FAN_MODE = 1001
 
-# Fan mode option keys (the select entity's translated states) mapped to the
-# raw register values.
+# Fan mode keys mapped to the raw register values.
 FAN_MODE_MODBUS_VALUES: dict[str, int] = {
     "off": 0,
     "night": 1,

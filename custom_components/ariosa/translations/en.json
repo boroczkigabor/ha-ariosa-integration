@@ -154,15 +154,18 @@
         "name": "Preheater alarm"
       }
     },
-    "select": {
+    "fan": {
       "fan_mode": {
         "name": "Fan mode",
-        "state": {
-          "off": "Off",
-          "night": "Night",
-          "level_1": "Level 1",
-          "level_2": "Level 2",
-          "level_3": "Level 3"
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "night": "Night",
+              "level_1": "Level 1",
+              "level_2": "Level 2",
+              "level_3": "Level 3"
+            }
+          }
         }
       }
     }

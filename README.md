@@ -21,7 +21,7 @@ operational data.
   temperature against a reference temperature entity of your choice
 - A **season sensor** reporting the unit's configured operating mode
   (Automatic / Winter)
-- An optional **fan mode control** (Off / Night / Level 1-3) that writes to
+- An optional **fan mode control** (Off / Night / Level 1-3, as a native Home Assistant fan) that writes to
   the unit over Modbus — see [Fan control](#fan-control-optional)
 - Two **status binary sensors** for the preheater and the heat exchanger
   bypass
@@ -194,15 +194,23 @@ sets the fan mode. To use it:
 2. In the integration's setup (or later under **Configure**), tick
    **Enable fan control**. Ticking it confirms the step above.
 
-A **Fan mode** select entity is then created with these options:
+A **Fan** entity is then created, using Home Assistant's native fan
+platform (so the standard fan card, voice assistants, HomeKit and so on
+work with it). It has four speed steps; turning it off is the fan's off
+state:
 
-| Option  | Register value |
-|---------|----------------|
-| Off     | 0              |
-| Night   | 1              |
-| Level 1 | 2              |
-| Level 2 | 3              |
-| Level 3 | 4              |
+| Fan state / speed | Mode    | Register value |
+|-------------------|---------|----------------|
+| Off (0 %)         | Off     | 0              |
+| 25 %              | Night   | 1              |
+| 50 %              | Level 1 | 2              |
+| 75 %              | Level 2 | 3              |
+| 100 %             | Level 3 | 4              |
+
+The same four modes are also offered as named **presets** (Night, Level 1,
+Level 2, Level 3), so the fan's dropdown shows the mode names as text; the
+percentages are just the four steps of the slider, not real airflow.
+Turning the fan on without choosing a speed or preset selects Level 1.
 
 Notes:
 

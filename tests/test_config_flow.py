@@ -232,7 +232,7 @@ async def test_options_flow_toggles_control(hass):
 
         entry = await _setup_entry(hass)
         assert entry.options == {}
-        assert hass.states.get("select.ariosa_ventilation_fan_mode") is None
+        assert hass.states.get("fan.ariosa_ventilation_fan_mode") is None
 
         flow = await hass.config_entries.options.async_init(entry.entry_id)
         await hass.config_entries.options.async_configure(
@@ -241,7 +241,7 @@ async def test_options_flow_toggles_control(hass):
         await hass.async_block_till_done()
 
         assert entry.options == {"enable_control": True}
-        assert hass.states.get("select.ariosa_ventilation_fan_mode") is not None
+        assert hass.states.get("fan.ariosa_ventilation_fan_mode") is not None
 
         flow = await hass.config_entries.options.async_init(entry.entry_id)
         await hass.config_entries.options.async_configure(
@@ -250,4 +250,4 @@ async def test_options_flow_toggles_control(hass):
         await hass.async_block_till_done()
 
         assert entry.options == {}
-        assert hass.states.get("select.ariosa_ventilation_fan_mode") is None
+        assert hass.states.get("fan.ariosa_ventilation_fan_mode") is None
