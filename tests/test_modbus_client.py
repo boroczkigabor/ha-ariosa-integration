@@ -1,6 +1,4 @@
-from unittest.mock import AsyncMock
-from unittest.mock import MagicMock
-from unittest.mock import patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
@@ -170,3 +168,90 @@ async def test_connect_failure_raises_cannot_connect_and_resets() -> None:
 
         first.close.assert_called_once()
         assert client_cls.call_count == 2
+
+
+def _client_with(mock_client: MagicMock):
+    """An AriosaClient whose pymodbus client is the given mock."""
+
+    with patch(
+        "custom_components.ariosa.modbus_client.AsyncModbusTcpClient",
+        return_value=mock_client,
+    ):
+        return AriosaClient("127.0.0.1", 502, 3)
+
+
+@pytest.mark.asyncio
+async def test_write_fan_mode_writes_register_1001() -> None:
+    mock = MagicMock()
+    mock.connected = True
+    mock.write_register = AsyncMock(return_value=MagicMock(isError=lambda: False))
+
+    await _client_with(mock).write_fan_mode(3)
+
+    mock.write_register.assert_awaited_once_with(address=1001, value=3, device_id=3)
+
+
+@pytest.mark.asyncio
+async def test_write_fan_mode_rejected_keeps_connection() -> None:
+    """A Modbus exception reply (control disabled in the unit) is a
+    WriteError, but the connection is fine, so it must not be reset."""
+
+    from custom_components.ariosa.exceptions import WriteError
+
+    mock = MagicMock()
+    mock.connected = True
+    mock.write_register = AsyncMock(return_value=MagicMock(isError=lambda: True))
+
+    ariosa = _client_with(mock)
+
+    with pytest.raises(WriteError):
+        await ariosa.write_fan_mode(2)
+
+    mock.close.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_write_fan_mode_timeout_raises_write_error_and_resets() -> None:
+    from custom_components.ariosa.exceptions import WriteError
+
+    dead = MagicMock()
+    dead.connected = True
+    dead.write_register = AsyncMock(side_effect=TimeoutError)
+
+    with patch(
+        "custom_components.ariosa.modbus_client.AsyncModbusTcpClient",
+        side_effect=[dead, MagicMock()],
+    ):
+        ariosa = AriosaClient("127.0.0.1", 502, 1)
+
+        with pytest.raises(WriteError):
+            await ariosa.write_fan_mode(1)
+
+    dead.close.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_read_fan_mode() -> None:
+    mock = MagicMock()
+    mock.connected = True
+    mock.read_holding_registers = AsyncMock(
+        return_value=MagicMock(isError=lambda: False, registers=[4])
+    )
+
+    assert await _client_with(mock).read_fan_mode() == 4
+
+    mock.read_holding_registers.assert_awaited_once_with(
+        address=1001, count=1, device_id=3
+    )
+
+
+@pytest.mark.asyncio
+async def test_read_fan_mode_unsupported_returns_none() -> None:
+    mock = MagicMock()
+    mock.connected = True
+    mock.read_holding_registers = AsyncMock(
+        return_value=MagicMock(isError=lambda: True, registers=[])
+    )
+
+    assert await _client_with(mock).read_fan_mode() is None
+    mock.close.assert_not_called()

@@ -15,6 +15,7 @@ from homeassistant.core import callback
 from homeassistant.helpers import selector
 
 from .const import (
+    CONF_ENABLE_CONTROL,
     CONF_REFERENCE_TEMPERATURE_ENTITY,
     DEFAULT_NAME,
     DEFAULT_PORT,
@@ -41,6 +42,7 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
         vol.Optional(
             CONF_REFERENCE_TEMPERATURE_ENTITY
         ): REFERENCE_TEMPERATURE_ENTITY_SELECTOR,
+        vol.Optional(CONF_ENABLE_CONTROL, default=False): bool,
     }
 )
 
@@ -61,8 +63,29 @@ OPTIONS_SCHEMA = vol.Schema(
         vol.Optional(
             CONF_REFERENCE_TEMPERATURE_ENTITY
         ): REFERENCE_TEMPERATURE_ENTITY_SELECTOR,
+        vol.Optional(CONF_ENABLE_CONTROL, default=False): bool,
     }
 )
+
+
+def _build_options(user_input: dict[str, Any]) -> dict[str, Any]:
+    """Pull the settings (as opposed to connection info) out of form input.
+
+    Unset values are left out entirely rather than stored as None/False, so
+    "not configured" always looks the same in the entry's options.
+    """
+
+    options: dict[str, Any] = {}
+
+    # The entity selector can submit an empty string when the optional
+    # field is left blank; treat that as "not set".
+    if reference_entity_id := user_input.pop(CONF_REFERENCE_TEMPERATURE_ENTITY, None):
+        options[CONF_REFERENCE_TEMPERATURE_ENTITY] = reference_entity_id
+
+    if user_input.pop(CONF_ENABLE_CONTROL, False):
+        options[CONF_ENABLE_CONTROL] = True
+
+    return options
 
 
 async def _async_test_connection(data: dict[str, Any]) -> str | None:
@@ -105,15 +128,12 @@ class AriosaConfigFlow(ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
 
         if user_input is not None:
-            # The entity selector can submit an empty string when the
-            # optional field is left blank; normalize that to "not set".
-            # The reference entity is a *setting*, not connection info, so
-            # it's split out into options rather than kept in `data` -
-            # that's also what makes it editable later via the options
-            # flow (Configure) without re-adding the whole device.
-            reference_entity_id = (
-                user_input.pop(CONF_REFERENCE_TEMPERATURE_ENTITY, None) or None
-            )
+            # The reference entity and the fan control switch are
+            # *settings*, not connection info, so they're split out into
+            # options rather than kept in `data` - that's also what makes
+            # them editable later via the options flow (Configure) without
+            # re-adding the whole device.
+            options = _build_options(user_input)
 
             await self.async_set_unique_id(user_input[CONF_HOST])
             self._abort_if_unique_id_configured()
@@ -127,11 +147,7 @@ class AriosaConfigFlow(ConfigFlow, domain=DOMAIN):
                 return self.async_create_entry(
                     title=DEFAULT_NAME,
                     data=user_input,
-                    options={
-                        CONF_REFERENCE_TEMPERATURE_ENTITY: reference_entity_id,
-                    }
-                    if reference_entity_id
-                    else {},
+                    options=options,
                 )
 
         return self.async_show_form(
@@ -217,20 +233,12 @@ class AriosaOptionsFlow(OptionsFlow):
         """Manage the options."""
 
         if user_input is not None:
-            reference_entity_id = (
-                user_input.pop(CONF_REFERENCE_TEMPERATURE_ENTITY, None) or None
-            )
-
             # `title` is unused by the frontend for options entries (unlike
             # config entries, where it names the device) - "" is the
             # standard convention.
             return self.async_create_entry(
                 title="",
-                data={
-                    CONF_REFERENCE_TEMPERATURE_ENTITY: reference_entity_id,
-                }
-                if reference_entity_id
-                else {},
+                data=_build_options(user_input),
             )
 
         return self.async_show_form(

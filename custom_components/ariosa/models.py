@@ -44,3 +44,8 @@ class AriosaMeasurements:
     sensor_alarm: bool = False
     motor_protection_alarm: bool = False
     preheater_alarm: bool = False
+
+    # Fan mode register (raw value). Only populated when fan control is
+    # enabled and the unit reports it; None otherwise.
+
+    fan_mode: int | None = None

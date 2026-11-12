@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PORT, CONF_SLAVE
 
-from .const import DOMAIN, PLATFORMS
+from .const import CONF_ENABLE_CONTROL, DOMAIN, PLATFORMS
 from .coordinator import AriosaDataUpdateCoordinator
 from .modbus_client import AriosaClient
 
@@ -35,6 +35,7 @@ async def async_setup_entry(
     coord = AriosaDataUpdateCoordinator(
         hass,
         client,
+        control_enabled=bool(entry.options.get(CONF_ENABLE_CONTROL)),
     )
 
     try:
@@ -63,10 +64,11 @@ async def _async_update_listener(
 ) -> None:
     """Reload the entry when its options change.
 
-    Options (currently just the reference temperature entity) are edited
-    via the "Configure" options flow after setup. Reloading picks up the
-    change immediately - adding or removing the temperature waste sensor
-    as needed - without requiring a Home Assistant restart.
+    Options (the reference temperature entity and the fan control switch)
+    are edited via the "Configure" options flow after setup. Reloading
+    picks up the change immediately - adding or removing the temperature
+    waste sensors and the fan mode control as needed - without requiring
+    a Home Assistant restart.
     """
 
     await hass.config_entries.async_reload(entry.entry_id)

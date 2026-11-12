@@ -7,10 +7,12 @@
         "data": {
           "host": "Állomásnév",
           "port": "Port",
-          "reference_temperature_entity": "Belső hőmérséklet referencia (opcionális)"
+          "reference_temperature_entity": "Belső hőmérséklet referencia (opcionális)",
+          "enable_control": "Ventilátor vezérlés engedélyezése (Modbus írás)"
         },
         "data_description": {
-          "reference_temperature_entity": "Egy meglévő hőmérséklet entitás, amelyhez a készülék által mért belső hőmérséklet viszonyítva lesz, pl. egy szobatermosztát érzékelője. A hőveszteség számításához szükséges, míg az elszívott levegő a gépbe ér."
+          "reference_temperature_entity": "Egy meglévő hőmérséklet entitás, amelyhez a készülék által mért belső hőmérséklet viszonyítva lesz, pl. egy szobatermosztát érzékelője. A hőveszteség számításához szükséges, míg az elszívott levegő a gépbe ér.",
+          "enable_control": "Létrehoz egy ventilátor-üzemmód entitást, amellyel a Home Assistant módosíthatja a ventilátor fokozatát. Csak akkor jelöld be, ha a készülék haladó menüjében a Modbus vezérlés engedélyezve van - különben a készülék elutasítja a parancsokat."
         }
       },
       "reconfigure": {
@@ -37,10 +39,12 @@
       "init": {
         "description": "Az Ariosa szellőztető egység beállításainak frissítése.",
         "data": {
-          "reference_temperature_entity": "Belső hőmérséklet referencia (opcionális)"
+          "reference_temperature_entity": "Belső hőmérséklet referencia (opcionális)",
+          "enable_control": "Ventilátor vezérlés engedélyezése (Modbus írás)"
         },
         "data_description": {
-          "reference_temperature_entity": "Egy meglévő hőmérséklet entitás, amelyhez a készülék által mért belső hőmérséklet viszonyítva lesz, pl. egy szobatermosztát érzékelője. A hőveszteség számításához szükséges, míg az elszívott levegő a gépbe ér."
+          "reference_temperature_entity": "Egy meglévő hőmérséklet entitás, amelyhez a készülék által mért belső hőmérséklet viszonyítva lesz, pl. egy szobatermosztát érzékelője. A hőveszteség számításához szükséges, míg az elszívott levegő a gépbe ér.",
+          "enable_control": "Létrehoz egy ventilátor-üzemmód entitást, amellyel a Home Assistant módosíthatja a ventilátor fokozatát. Csak akkor jelöld be, ha a készülék haladó menüjében a Modbus vezérlés engedélyezve van - különben a készülék elutasítja a parancsokat."
         }
       }
     }
@@ -148,6 +152,18 @@
       },
       "preheater_alarm": {
         "name": "Előfűtő riasztás"
+      }
+    },
+    "select": {
+      "fan_mode": {
+        "name": "Ventilátor üzemmód",
+        "state": {
+          "off": "Ki",
+          "night": "Éjszakai",
+          "level_1": "1. fokozat",
+          "level_2": "2. fokozat",
+          "level_3": "3. fokozat"
+        }
       }
     }
   }

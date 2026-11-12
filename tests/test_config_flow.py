@@ -1,10 +1,10 @@
-from unittest.mock import AsyncMock
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 
 from homeassistant import config_entries
 from homeassistant.const import CONF_HOST, CONF_PORT
 
 from custom_components.ariosa.const import DOMAIN
+from tests.test_data import SUMMER_MEASUREMENTS
 
 
 async def test_config_flow_success(hass):
@@ -187,3 +187,67 @@ async def test_reconfigure_cannot_connect_keeps_old_host(hass):
         assert result2["type"] == "form"
         assert result2["errors"] == {"base": "cannot_connect"}
         assert entry.data[CONF_HOST] == "192.168.1.10"
+
+
+async def test_enable_control_tick_is_stored_in_options(hass):
+    """The control tick lives in options, so it can be changed later."""
+
+    with (
+        patch("custom_components.ariosa.config_flow.AriosaClient") as client_cls,
+        patch("custom_components.ariosa.AriosaClient", new=client_cls),
+    ):
+        client = client_cls.return_value
+
+        client.connect = AsyncMock()
+        client.disconnect = AsyncMock()
+        client.read_inputs = AsyncMock(return_value=SUMMER_MEASUREMENTS)
+        client.read_fan_mode = AsyncMock(return_value=1)
+
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN,
+            context={"source": config_entries.SOURCE_USER},
+        )
+        result2 = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {CONF_HOST: "192.168.1.10", CONF_PORT: 502, "enable_control": True},
+        )
+
+        assert result2["type"] == "create_entry"
+        assert result2["options"] == {"enable_control": True}
+        assert "enable_control" not in result2["data"]
+
+
+async def test_options_flow_toggles_control(hass):
+    with (
+        patch("custom_components.ariosa.config_flow.AriosaClient") as client_cls,
+        patch("custom_components.ariosa.AriosaClient", new=client_cls),
+    ):
+        client = client_cls.return_value
+
+        client.connect = AsyncMock()
+        client.disconnect = AsyncMock()
+        client.read_inputs = AsyncMock()
+        client.read_inputs.return_value = SUMMER_MEASUREMENTS
+        client.read_fan_mode = AsyncMock(return_value=1)
+
+        entry = await _setup_entry(hass)
+        assert entry.options == {}
+        assert hass.states.get("select.ariosa_ventilation_fan_mode") is None
+
+        flow = await hass.config_entries.options.async_init(entry.entry_id)
+        await hass.config_entries.options.async_configure(
+            flow["flow_id"], {"enable_control": True}
+        )
+        await hass.async_block_till_done()
+
+        assert entry.options == {"enable_control": True}
+        assert hass.states.get("select.ariosa_ventilation_fan_mode") is not None
+
+        flow = await hass.config_entries.options.async_init(entry.entry_id)
+        await hass.config_entries.options.async_configure(
+            flow["flow_id"], {"enable_control": False}
+        )
+        await hass.async_block_till_done()
+
+        assert entry.options == {}
+        assert hass.states.get("select.ariosa_ventilation_fan_mode") is None

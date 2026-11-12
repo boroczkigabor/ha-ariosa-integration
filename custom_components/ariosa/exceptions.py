@@ -11,3 +11,7 @@ class CannotConnect(AriosaError):
 
 class ReadError(AriosaError):
     """Unable to read Modbus registers."""
+
+
+class WriteError(AriosaError):
+    """Unable to write a Modbus register (e.g. Modbus control is disabled)."""

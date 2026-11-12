@@ -11,6 +11,7 @@ from .const import (
     REGISTER_EJECT_TEMP,
     REGISTER_EXT_HUM,
     REGISTER_EXT_TEMP,
+    REGISTER_FAN_MODE,
     REGISTER_FILTER_CHANGE_ALARM,
     REGISTER_FILTER_CLOGGED_ALARM,
     REGISTER_FILTER_HOURS,
@@ -32,7 +33,7 @@ from .const import (
     REGISTER_SENSOR_ALARM,
     START_REGISTER,
 )
-from .exceptions import CannotConnect, ReadError
+from .exceptions import CannotConnect, ReadError, WriteError
 from .models import AriosaMeasurements
 
 # Network-level failures that must surface as our own AriosaError types
@@ -160,6 +161,47 @@ class AriosaClient:
             ),
             preheater_alarm=self._boolean(registers[REGISTER_PREHEATER_ALARM]),
         )
+
+    async def read_fan_mode(self) -> int | None:
+        if not self.connected:
+            await self.connect()
+
+        try:
+            response = await self._client.read_holding_registers(
+                address=REGISTER_FAN_MODE, count=1, device_id=self._slave
+            )
+        except _TRANSPORT_ERRORS as err:
+            await self._reset()
+            raise ReadError from err
+
+        if response.isError() or not response.registers:
+            return None
+
+        return response.registers[0]
+
+    async def write_fan_mode(self, value: int) -> None:
+        """Write the fan mode register."""
+
+        if not self.connected:
+            await self.connect()
+
+        try:
+            response = await self._client.write_register(
+                address=REGISTER_FAN_MODE, value=value, device_id=self._slave
+            )
+        except _TRANSPORT_ERRORS as err:
+            await self._reset()
+            raise WriteError from err
+
+        if response.isError():
+            # The unit is reachable but refused: typically because Modbus
+            # control isn't enabled in its advanced menu. Keep the
+            # connection - polling still works.
+            msg = (
+                "The unit rejected the fan mode write; check that Modbus "
+                "control is enabled in its advanced menu"
+            )
+            raise WriteError(msg)
 
     @staticmethod
     def _temperature(value: int) -> float:

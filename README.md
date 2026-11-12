@@ -21,6 +21,8 @@ operational data.
   temperature against a reference temperature entity of your choice
 - A **season sensor** reporting the unit's configured operating mode
   (Automatic / Winter)
+- An optional **fan mode control** (Off / Night / Level 1-3) that writes to
+  the unit over Modbus — see [Fan control](#fan-control-optional)
 - Two **status binary sensors** for the preheater and the heat exchanger
   bypass
 - **Nine alarm binary sensors** for fault conditions, automatically
@@ -76,10 +78,11 @@ Configuration is done entirely through the UI:
 3. Enter the connection details:
 
    | Field                        | Description                                                                                                    | Default    |
-      |------------------------------|----------------------------------------------------------------------------------------------------------------|------------|
+         |------------------------------|----------------------------------------------------------------------------------------------------------------|------------|
    | Host                         | IP address or hostname of the ventilation unit                                                                 | —          |
    | Port                         | Modbus TCP port                                                                                                | `502`      |
    | Reference temperature entity | Optional — an existing temperature entity to compare against. See [below](#temperature-waste-sensor-optional). | — (none)   |
+   | Enable fan control           | Optional — creates the fan mode control. Tick only if Modbus control is enabled in the unit's advanced menu. See [below](#fan-control-optional). | off        |
 
 4. Home Assistant will attempt to connect and read the unit's registers
    before creating the entry — if this fails, double-check the host/port
@@ -102,13 +105,13 @@ showing a setup error.
 
 ### Changing settings later
 
-The reference temperature entity can be set, changed, or cleared at any
-time without re-adding the integration:
+The reference temperature entity and the fan control tick can be set,
+changed, or cleared at any time without re-adding the integration:
 
 **Settings → Devices & Services → Ariosa Ventilation → Configure**
 
-Saving reloads the entry automatically, so the temperature waste sensor
-appears or disappears immediately to match.
+Saving reloads the entry automatically, so the temperature waste sensors
+and the fan mode control appear or disappear immediately to match.
 
 ## Entities
 
@@ -181,6 +184,38 @@ Notes on how it behaves:
   value.
 - Without a reference entity configured, this sensor simply doesn't
   exist — it isn't shown as unavailable.
+
+### Fan control (optional)
+
+The unit exposes a single writable Modbus register (address `1001`) that
+sets the fan mode. To use it:
+
+1. On the unit, enable Modbus control in the **advanced menu**.
+2. In the integration's setup (or later under **Configure**), tick
+   **Enable fan control**. Ticking it confirms the step above.
+
+A **Fan mode** select entity is then created with these options:
+
+| Option  | Register value |
+|---------|----------------|
+| Off     | 0              |
+| Night   | 1              |
+| Level 1 | 2              |
+| Level 2 | 3              |
+| Level 3 | 4              |
+
+Notes:
+
+- Without the tick the entity doesn't exist at all; unticking it later
+  removes the entity.
+- The current mode is read back from the same register on every poll. If
+  your unit doesn't allow reading it, the entity shows the last mode set
+  from Home Assistant (unknown until you set one).
+- Changes made on the unit itself show up after the next poll (30 seconds).
+- If the unit rejects a command — typically because Modbus control isn't
+  enabled in its advanced menu — Home Assistant shows an error and the
+  entity keeps its previous state.
+- The unit's other registers stay read-only; nothing else is ever written.
 
 ### Binary sensors
 

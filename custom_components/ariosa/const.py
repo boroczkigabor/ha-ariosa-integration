@@ -15,6 +15,10 @@ DEFAULT_SLAVE = 1
 # "temperature waste" sensor. Not a fixed HA const, so it's defined here.
 CONF_REFERENCE_TEMPERATURE_ENTITY = "reference_temperature_entity"
 
+# Optional config-flow/options field: the user confirms that Modbus control
+# is enabled in the unit's advanced menu and wants the fan control entity.
+CONF_ENABLE_CONTROL = "enable_control"
+
 UPDATE_INTERVAL = timedelta(seconds=30)
 
 START_REGISTER = 100
@@ -48,7 +52,26 @@ REGISTER_SENSOR_ALARM = 22
 REGISTER_MOTOR_PROTECTION_ALARM = 23
 REGISTER_PREHEATER_ALARM = 24
 
-PLATFORMS: list[str] = ["sensor", "binary_sensor"]
+PLATFORMS: list[str] = ["sensor", "binary_sensor", "select"]
+
+
+# The single writable register: the fan mode. Its address is used as-is on
+# the wire (like START_REGISTER); only works when Modbus control has been
+# enabled in the unit's advanced menu.
+REGISTER_FAN_MODE = 1001
+
+# Fan mode option keys (the select entity's translated states) mapped to the
+# raw register values.
+FAN_MODE_MODBUS_VALUES: dict[str, int] = {
+    "off": 0,
+    "night": 1,
+    "level_1": 2,
+    "level_2": 3,
+    "level_3": 4,
+}
+FAN_MODE_BY_MODBUS_VALUE: dict[int, str] = {
+    value: key for key, value in FAN_MODE_MODBUS_VALUES.items()
+}
 
 
 # Raw Modbus values for the season register, mapped to the machine-readable

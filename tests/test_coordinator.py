@@ -56,3 +56,70 @@ async def test_failed_first_setup_releases_client(hass):
 
         assert entry.state is ConfigEntryState.SETUP_RETRY
         client.disconnect.assert_awaited()
+
+
+@pytest.mark.asyncio
+async def test_fan_mode_not_read_when_control_disabled(hass):
+    client = AsyncMock()
+    client.read_inputs.return_value = SUMMER_MEASUREMENTS
+
+    coordinator = AriosaDataUpdateCoordinator(hass, client)
+    await coordinator.async_refresh()
+
+    client.read_fan_mode.assert_not_called()
+    assert coordinator.data.fan_mode is None
+
+
+@pytest.mark.asyncio
+async def test_fan_mode_read_when_control_enabled(hass):
+    client = AsyncMock()
+    client.read_inputs.return_value = SUMMER_MEASUREMENTS
+    client.read_fan_mode.return_value = 2
+
+    coordinator = AriosaDataUpdateCoordinator(hass, client, control_enabled=True)
+    await coordinator.async_refresh()
+
+    assert coordinator.data.fan_mode == 2
+
+
+@pytest.mark.asyncio
+async def test_unreadable_fan_mode_falls_back_to_last_written(hass):
+    """If the unit won't report the register, show what we last wrote."""
+
+    client = AsyncMock()
+    client.read_inputs.return_value = SUMMER_MEASUREMENTS
+    client.read_fan_mode.return_value = None
+
+    coordinator = AriosaDataUpdateCoordinator(hass, client, control_enabled=True)
+    await coordinator.async_refresh()
+
+    assert coordinator.data.fan_mode is None
+
+    await coordinator.async_set_fan_mode(3)
+
+    client.write_fan_mode.assert_awaited_once_with(3)
+    assert coordinator.data.fan_mode == 3
+
+    await coordinator.async_refresh()
+
+    assert coordinator.data.fan_mode == 3
+
+
+@pytest.mark.asyncio
+async def test_failed_write_raises_homeassistant_error(hass):
+    from homeassistant.exceptions import HomeAssistantError
+
+    from custom_components.ariosa.exceptions import WriteError
+
+    client = AsyncMock()
+    client.read_inputs.return_value = SUMMER_MEASUREMENTS
+    client.read_fan_mode.return_value = 1
+    client.write_fan_mode.side_effect = WriteError
+
+    coordinator = AriosaDataUpdateCoordinator(hass, client, control_enabled=True)
+    await coordinator.async_refresh()
+
+    with pytest.raises(HomeAssistantError):
+        await coordinator.async_set_fan_mode(3)
+
+    assert coordinator.data.fan_mode == 1
