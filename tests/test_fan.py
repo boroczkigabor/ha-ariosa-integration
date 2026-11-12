@@ -135,7 +135,7 @@ async def test_turn_off_writes_zero(hass):
     assert hass.states.get(ENTITY_ID).state == "off"
 
 
-async def test_turn_on_defaults_to_level_1(hass):
+async def test_turn_on_defaults_to_level_2(hass):
     with patch("custom_components.ariosa.AriosaClient") as client_cls:
         client = await _setup(hass, _entry(control=True), client_cls, fan_mode=0)
 
@@ -143,8 +143,8 @@ async def test_turn_on_defaults_to_level_1(hass):
             "fan", "turn_on", {"entity_id": ENTITY_ID}, blocking=True
         )
 
-    client.write_fan_mode.assert_awaited_once_with(2)
-    assert hass.states.get(ENTITY_ID).attributes["percentage"] == 50
+    client.write_fan_mode.assert_awaited_once_with(3)
+    assert hass.states.get(ENTITY_ID).attributes["percentage"] == 75
 
 
 async def test_write_failure_is_reported(hass):
